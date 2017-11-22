@@ -2,12 +2,10 @@
 #author: zhihua.ye@spreadtrum.com
 
 """
-write a class to check if process is timeout
-check the returncode
 
 1. start to process to execute
 2. start thread to check if process is ended by checking the SIGHUP and return code
-3. join with timeout,  time fires up, send SIGUSR1 to end process
+3. join with timeout,  timer fires up, send SIGUSR1 to KILL process
 
 """
 
