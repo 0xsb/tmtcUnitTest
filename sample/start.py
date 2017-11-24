@@ -21,7 +21,9 @@ DEVNULL = open(os.devnull, 'wb')
 #process=subprocess.Popen(["sleep", "1000"],stdout=DEVNULL,stderr=subprocess.PIPE)
 
 #emulate error code 2
-process=subprocess.Popen(["ls", "1000"],stdout=DEVNULL,stderr=subprocess.PIPE)
+import shlex
+cmd = shlex.split("abc")
+process=subprocess.Popen(cmd,stdout=DEVNULL,stderr=subprocess.PIPE)
 
 #emulate sipp timeout
 #process=subprocess.Popen(["adb", "shell", "sipp", "-sf", "/data/data/ut/reg.xml", "-p", "5060", "-t","u1", "-m", "1", "-trace_err"], stdout=DEVNULL,stderr=subprocess.PIPE)

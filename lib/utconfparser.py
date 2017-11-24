@@ -18,6 +18,8 @@ class ConfAttr(dict):
         self['xmls'] = list()
         self['timeout'] = 5
         self['port'] = 5065
+        self['scenario'] = "TMTC test"
+        self['tmtccmd'] = None
         super(ConfAttr, self).__init__(*arg, **kw)
 
     def dump(self):
@@ -55,7 +57,6 @@ class utconfparser:
         try:
             config = self.config
             self.attr['inis'] = convertList(config[ConfigSection.dep]['inis'])
-            print 'inis is ' + str(self.attr['inis'])
             if checkFlistType(self.attr['inis'], 'ini'):
                 #parse subconfs
                 for index, ini in enumerate(self.attr['inis']):
@@ -64,33 +65,47 @@ class utconfparser:
                     subcon = utconfparser(brickdir=self.brickdir, confdir=inidirname, configfile=ini)
                     subcon.getattr()
                     self.subconf.append(subcon)
-
             else:
                 emsg = "type is not all ini files"
                 raise ConfigException(emsg)
+
+            if keyInSection(config,  ConfigSection.desc, 'scenario'):
+                self.attr['scenario'] = config[ConfigSection.desc]['scenario']
+
         except:
             etype = sys.exc_info()[0]
             evalue = sys.exc_info()[1]
             self.logger.logger.error("Unexpected error:"+ str(etype) + ' ' +str(evalue))
+
 
     def getslave(self):
         config = self.config
         try:
             self.attr['xmls'] = convertList(config[ConfigSection.dep]['xmls'])
 
-            if checkFlistType(self.attr['xmls'], 'xml'):
-                #collect xmls
-                pass
-            else:
+            if not checkFlistType(self.attr['xmls'], 'xml'):
                 emsg = "type is not all xml files"
                 raise ConfigException(emsg)
 
+            #########critical data is collected here.
             #collect port
+            if keyInSection(config,  ConfigSection.param, 'timeout'):
+                self.attr['timeout'] = config[ConfigSection.param]['timeout']
             #collect timeout
+            if keyInSection(config,  ConfigSection.param, 'port'):
+                self.attr['port'] = config[ConfigSection.param]['port']
+
+            if keyInSection(config,  ConfigSection.param, 'tmtccmd'):
+                self.attr['tmtccmd'] = config[ConfigSection.param]['tmtccmd']
+
+            if keyInSection(config,  ConfigSection.desc, 'scenario'):
+                self.attr['scenario'] = config[ConfigSection.desc]['scenario']
+
+
         except:
             etype = sys.exc_info()[0]
             evalue = sys.exc_info()[1]
-            self.logger.logger.error("Unexpected error:"+ str(etype) + ' ' +str(evalue))
+            self.logger.logger.error("Unexpected error:" + str(etype) + ' ' +str(evalue))
 
 
     def getattr(self):
@@ -103,7 +118,8 @@ class utconfparser:
         config = self.config
 
         try:
-            self.attr['type'] = config[ConfigSection.desc]['type']
+            if keyInSection(config, section=ConfigSection.desc, key='type'):
+                self.attr['type'] = config[ConfigSection.desc]['type']
             if isMasterConf(self.attr['type']):
                 self.getmaster()
             elif isSlaveConf(self.attr['type']):

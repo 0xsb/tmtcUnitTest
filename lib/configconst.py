@@ -21,12 +21,17 @@ class ConfigException(Exception):
         self.message = message
 
 
-def configHasSection(config, sectionname):
-    if sectionname in config:
+def configHasSection(config, section):
+    if section in config:
         return True
     else:
         return False
 
+
+def keyInSection(config, section, key):
+    if configHasSection(config, section):
+        if key in config[section]:
+            return True
 
 def isFile(fname, ftype):
     if fname:
