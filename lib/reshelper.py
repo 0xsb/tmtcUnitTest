@@ -20,7 +20,15 @@ class reshelper:
     def __init__(self):
         #device init
         #adb root, retry 3 times
+        self.logger = logConf()
+        try:
+            adbroot = "adb root"
+
         #adb remount, retry 3 times
+        except:
+            etype = sys.exc_info()[0]
+            evalue = sys.exc_info()[1]
+            self.logger.logger.info("Unexpected error: " + str(etype) + ' ' + str(evalue))
         pass
 
     def push(self, filename, destdir):
