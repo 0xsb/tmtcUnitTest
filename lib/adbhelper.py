@@ -45,7 +45,6 @@ class adbhelper:
 
 if __name__ == '__main__':
     try:
-
         adb = adbhelper()
         adb.initDevice()
         adb.push("adbhelper.py", "/system/lib/")

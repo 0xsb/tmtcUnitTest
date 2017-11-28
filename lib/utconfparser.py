@@ -2,7 +2,8 @@
 #author: zhihua.ye@spreadtrum.com
 """
 1. ut config can be nested configs
-2.
+this design is some kind of useless and meaningless.
+use json instead.
 """
 from configobj import ConfigObj,ConfigObjError
 import sys
@@ -17,7 +18,7 @@ class ConfAttr(dict):
         self['inis'] = list()
         self['xmls'] = list()
         self['timeout'] = 5
-        self['port'] = 5065
+        self['tmtcport'] = 21904
         self['scenario'] = "TMTC test"
         self['tmtccmd'] = None
         super(ConfAttr, self).__init__(*arg, **kw)
@@ -92,8 +93,8 @@ class utconfparser:
             if keyInSection(config,  ConfigSection.param, 'timeout'):
                 self.attr['timeout'] = config[ConfigSection.param]['timeout']
             #collect timeout
-            if keyInSection(config,  ConfigSection.param, 'port'):
-                self.attr['port'] = config[ConfigSection.param]['port']
+            if keyInSection(config,  ConfigSection.param, 'tmtcport'):
+                self.attr['tmtcport'] = config[ConfigSection.param]['tmtcport']
 
             if keyInSection(config,  ConfigSection.param, 'tmtccmd'):
                 self.attr['tmtccmd'] = config[ConfigSection.param]['tmtccmd']
