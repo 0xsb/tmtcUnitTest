@@ -1,0 +1,38 @@
+{
+  "description": {
+      "scenario" : "<UE MT call SIPp>",
+      "bugid" : "123456",
+      "commitid" : "abcdefg"
+  },
+
+  "ue": {
+      "tmtcport" : 21904,
+      "execdir" : "/data/data/ut/",
+      "config" : "provision.ini",
+      "binary" : "tmtclient",
+      "lib" : [
+                  "libavatar_ut.so",
+                  "liblemon_ut.so"
+      ]
+
+  },
+
+  "cases": [
+    {
+      "scenario": "Register",
+      "xml": "reg.xml",
+      "timeout": 4,
+      "tmtccmd": "c-reg"
+
+    },
+
+    {
+      "scenario": "Subscribe/Notify",
+      "xml": "subs_notify.xml",
+      "timeout": 4,
+      "tmtccmd":  ""
+    }
+
+  ]
+
+}

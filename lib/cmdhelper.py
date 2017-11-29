@@ -45,6 +45,11 @@ class cmdhelper:
             self.logger.logger.error("Unexpected error:"+ estr)
             raise(CmdException(estr))
 
+
+        #extract info
+        self.xmls = list()
+        self.timeouts = list()
+
         #real cmd list
         self.sippcmds = list()
         self.nccmds = list()
@@ -54,6 +59,33 @@ class cmdhelper:
         self.logger.logger.info('scenario is ' + desc['scenario'])
         self.logger.logger.info('bug id is ' + str(desc['bugid']) + ', commit id is '+ str(desc['commitid']))
 
+    def getUeConfig(self):
+        ueconfig = dict()
+        ueconfig['tmtcport'] = 21904
+        ueconfig['execdir'] = "/data/data/ut/"
+        ueconfig['config'] =  "provision.ini"
+        ueconfig['binary'] = 'tmtclient'
+        ueconfig['lib'] = [
+                  "libavatar_ut.so",
+                  "liblemon_ut.so"
+        ]
+
+        if 'tmtcport' in self.config['ue']:
+            ueconfig['tmtcport'] = self.config['ue']['tmtcport']
+
+        if 'execdir' in self.config['ue']:
+            ueconfig['execdir'] = self.config['ue']['execdir']
+
+        if 'config' in self.config['ue']:
+            ueconfig['config'] = self.config['ue']['config']
+
+        if 'binary' in self.config['ue']:
+            ueconfig['binary'] = self.config['ue']['binary']
+
+        if 'lib' in self.config['ue']:
+            ueconfig['lib'] = self.config['ue']['lib']
+
+        return ueconfig
 
     def buildCmd(self):
         cases = self.config['cases']
@@ -66,6 +98,8 @@ class cmdhelper:
                 xml = case['xml']
                 timeout = case['timeout']
                 tmtccmd = case['tmtccmd']
+                self.xmls.append(xml)
+                self.timeouts.append(timeout)
 
                 if validCmd(tmtccmd) is False:
                     tmtccmd = None
@@ -115,6 +149,19 @@ class cmdhelper:
         nccmd['timeout'] = 1
         return nccmd
 
+    def getxmls(self):
+        return self.xmls
+
+    def gettimeouts(self):
+        return self.timeouts
+
+    def getsippcmds(self):
+        return self.sippcmds
+
+    def getnccmds(self):
+        return self.nccmds
+
+
     def printCmds(self):
 
         for index, sipp in enumerate(self.sippcmds):
@@ -126,6 +173,7 @@ class cmdhelper:
 if __name__ == '__main__':
     cmd = cmdhelper(confdir="../cases/mt/")
     cmd.getDesc()
+    ueconfig = cmd.getUeConfig()
     cmd.buildCmd()
     cmd.printCmds()
 

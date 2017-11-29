@@ -28,7 +28,9 @@ class adbhelper:
         except:
             etype = sys.exc_info()[0]
             evalue = sys.exc_info()[1]
-            self.logger.logger.info("Unexpected error: " + str(etype) + ' ' + str(evalue))
+            estr = str(etype) + ' ' + str(evalue)
+            self.logger.logger.info("Unexpected error: " + estr)
+
 
     def initDevice(self):
         adbroot = "adb root"
@@ -42,6 +44,9 @@ class adbhelper:
         adbpush = "adb push " + filename + ' ' + destdir
         self.adbCmd(adbpush)
 
+    def mkdirp(self, filename):
+        mkdirp = "adb shell mkdir -p " + filename
+        self.adbCmd(mkdirp)
 
 if __name__ == '__main__':
     try:
