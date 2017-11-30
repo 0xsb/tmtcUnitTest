@@ -53,7 +53,6 @@ class etask:
                 self.poller.register(fd, select.EPOLLHUP)
                 #start thread to wait
                 self.wait = threading.Thread(target=self.waiter)
-                print 'cmd is ' + self.cmd
                 self.wait.setDaemon(True)
                 self.wait.start()
                 self.getResult()

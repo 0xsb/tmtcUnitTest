@@ -22,6 +22,7 @@ class adbhelper:
         self.logger = logConf()
 
     def adbCmd(self, cmd='', timeout=None, retry=1):
+        adbtask = None
         try:
             adbtask = etask(cmd=cmd, timeout=timeout, retry=retry)
             adbtask.run()
@@ -31,12 +32,15 @@ class adbhelper:
             estr = str(etype) + ' ' + str(evalue)
             self.logger.logger.info("Unexpected error: " + estr)
 
+        #add checkResult if cmd failed, raise exception and exit!
+        if adbtask:
+            adbtask.checkResult()
 
     def initDevice(self):
         adbroot = "adb root"
         adbremount = "adb remount"
-        self.adbCmd(adbroot)
-        self.adbCmd(adbremount)
+        self.adbCmd(adbroot, retry=3)
+        self.adbCmd(adbremount, retry=3)
 
 
     def push(self, filename, destdir):
