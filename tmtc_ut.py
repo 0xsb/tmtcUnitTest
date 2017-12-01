@@ -8,7 +8,7 @@ from lib.cmdhelper import *
 from lib.logConf import *
 import sys
 import os
-import threading
+from multiprocessing import Process
 
 # 1. env setup
 # 2. process goes
@@ -95,7 +95,7 @@ class TmtcUt(object):
         :return:
         """
         sippcmds = self.cmdenv.getsippcmds()
-        print str(sippcmds)
+
         for index, sippcmd in enumerate(sippcmds):
             cmd = sippcmd['cmd']
             timeout = sippcmd['timeout']
@@ -128,23 +128,21 @@ class TmtcUt(object):
         :return:
         """
         #FIXME: etask will block so should use multiprocessing instead!
-        """
-        tmtcworker = threading.Thread(target=self.tmtclientthread)
-        sippworker =  threading.Thread(target=self.sippthread)
-
-        tmtcworker.setDaemon(True)
-        sippworker.setDaemon(True)
-        tmtcworker.start()
-        sippworker.start()
-        #tmtclient will end due to etask timeout
-        #it will take the longest time to finish.
-        sippworker.join()
-        tmtcworker.join()
-        """
+        # run tmtclient
+        tmtcprocess = Process(target=self.tmtclientthread)
+        tmtcprocess.daemon = True
+        tmtcprocess.start()
         # run SIPp xml series
 
+        sippprocess = Process(target=self.sippthread)
+        sippprocess.daemon = True
+        sippprocess.start()
         # run nc
+        sippprocess.join()
+        tmtcprocess.join()
 
+        # sipp have the timeout
+        #nc will not hang so no need to timeout
 
 if __name__ == '__main__':
     tmtc = TmtcUt(confdir="cases/mt/", brickdir="cases/bricks/",bindir="bin")

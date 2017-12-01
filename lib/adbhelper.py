@@ -16,6 +16,9 @@ class adbException(Exception):
         super(adbException, self).__init__(message)
         self.message = message
 
+"""
+adbhelper exec all cmd except adb shell
+"""
 class adbhelper:
     def __init__(self):
         #device init
@@ -51,6 +54,36 @@ class adbhelper:
     def mkdirp(self, filename):
         mkdirp = "adb shell mkdir -p " + filename
         self.adbCmd(mkdirp)
+
+
+#TODO: adb shell need a special handler
+# we do not need adb shell's exit code , but shell cmd's exit code
+# so etask is not needed here.
+#def adb_shell
+
+#https://imsardine.wordpress.com/2012/06/05/android-adb-shell-exit-status/
+def adb_shell(shell_cmds):
+    shell_cmds += '; echo $?'
+    cmds = ['adb', 'shell', shell_cmds]
+    stdout = subprocess.Popen(cmds, stdout=subprocess.PIPE).communicate()[0].rstrip()
+
+    lines = stdout.splitlines()
+    print repr(stdout), lines
+    retcode = int(lines[-1])
+    if retcode !=0:
+        errmsg = 'failed to execute ADB shell commands (%i)' % retcode
+        if len(lines) > 1: errmsg += '\n' + '\n'.join(lines[:-1])
+        raise RuntimeError(errmsg)
+    return stdout
+
+
+"""
+write adb shell
+stderr: EPOLLHUP   break the l oop and wait for timeout
+stdout: POLLIN     readline
+"""
+
+
 
 if __name__ == '__main__':
     try:

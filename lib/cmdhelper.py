@@ -126,6 +126,8 @@ class cmdhelper:
         adb shell sipp -sf reg.xml -p 5060 -t u1 -m 1 -trace_err
         :return:
         """
+        #FIXME: there is no way to get sipp's return
+        #
         sippcmd = cmdObj()
         sippcmd['cmd'] = "adb shell sipp -sf " + xml + ' -p 5060 -t u1 -m 1 -trace_err'
         sippcmd['timeout'] = timeout
