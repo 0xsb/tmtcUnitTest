@@ -79,12 +79,8 @@ class etask:
         for fd, status in pairs:
             if self.fds2procs:
                 curproc = self.fds2procs[fd]
-                stdout, stderr = curproc.communicate()
-                #actually poll already done, so no output.
-                #self.logger.logger.info('stdout is '.format(stdout))
-                #self.logger.logger.info('stderr is '.format(stderr))
-
                 #returncode needed to be set by communicate
+                stdout, stderr = curproc.communicate()
                 self.returncode[self.curindex] = curproc.returncode
             else:
                 raise TaskException("fds2procs None.")
