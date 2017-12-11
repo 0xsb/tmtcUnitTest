@@ -14,6 +14,12 @@ from multiprocessing import Process
 # 2. process goes
 # 3. result check
 
+class utException(Exception):
+    def __init__(self, msg):
+        super(utException, self).__init__(msg)
+        self.message = msg
+
+
 class TmtcUt(object):
     def __init__(self, outdir = './output', loglevel='DEBUG', confdir='', brickdir='',bindir=''):
         self.logger = logConf(debuglevel=loglevel)
@@ -30,11 +36,15 @@ class TmtcUt(object):
         2. prepare env setup
         """
         self.cmdenv = cmdhelper(confdir=self.confdir)
+        #get ueconfig first
+        self.ueconfig = self.cmdenv.getUeConfig()
+        self.execdir = ''
+        #build cmd
         self.cmdenv.buildCmd()
 
         self.adb = adbhelper()
         self.adb.initDevice()
-        self.ueconfig = self.cmdenv.getUeConfig()
+
 
     def envsetup(self):
         desc = self.cmdenv.getDesc()
@@ -51,6 +61,7 @@ class TmtcUt(object):
         #UE config: Provision.ini
         proini = bindir + '/' + ueconfig['config']
         execdir = ueconfig['execdir']
+        self.execdir = execdir
         self.adb.mkdirp(execdir)
         self.adb.push(proini, execdir)
 
@@ -69,12 +80,12 @@ class TmtcUt(object):
         binary = self.ueconfig['binary']
         timeouts = self.cmdenv.gettimeouts()
 
-        #tmtclient timeout is the sum of all timeout plus 2
-        curtimeout = 2
+        #tmtclient timeout is the sum of all timeout plus
+        curtimeout = self.ueconfig['startuptime'] + 2
         for index, timeout in enumerate(timeouts):
             curtimeout = curtimeout + timeout
 
-        tmtccmd = 'adb shell ' + binary
+        tmtccmd = 'adb shell ' + ' cd ' + self.execdir+ '&&' + binary
 
         try:
             self.logger.logger.info('NOTE: start to run '+ tmtccmd + ' with timeout ' + str(curtimeout))
@@ -87,6 +98,7 @@ class TmtcUt(object):
             self.logger.logger.info("Unexpected error: " + estr)
 
         #TODO: add one more check about if all cases are finished.
+        #add one more cmd to exit zsh
 
 
     def sippthread(self):
@@ -96,20 +108,23 @@ class TmtcUt(object):
         """
         sippcmds = self.cmdenv.getsippcmds()
 
+        #multiprocess , ue need time to start
+        time.sleep( self.ueconfig['startuptime'])
+
         for index, sippcmd in enumerate(sippcmds):
             cmd = sippcmd['cmd']
             timeout = sippcmd['timeout']
             try:
                 self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
-                sipptask = etask(cmd= cmd, timeout=timeout, retry=1)
+                sipptask = eadbshell(cmd=cmd, timeout=timeout)
                 sipptask.run()
+
             except:
                 etype = sys.exc_info()[0]
                 evalue = sys.exc_info()[1]
                 estr = str(etype) + ' ' + str(evalue)
                 self.logger.logger.info("Unexpected error: " + estr)
-
-
+                #raise utException('case ' + str(index+1) + 'failed :' + estr)
 
     def ncthread(self):
         """
@@ -117,7 +132,29 @@ class TmtcUt(object):
         :return:
         """
         nccmds = self.cmdenv.getnccmds()
+        sippcmds = self.cmdenv.getsippcmds()
 
+        time.sleep( self.ueconfig['startuptime'])
+        for index, nccmd in enumerate(nccmds):
+            cmd = nccmd['cmd']
+            timeout = nccmd['timeout']
+            try:
+
+                #nccmd need to exec after previous sipp is running
+                if index > 0:
+                    waitsipptime = sippcmds[index-1]['timeout']
+                    waitsippcmd = sippcmds[index-1]['cmd']
+                    self.logger.logger.info('wait sipp ' + waitsippcmd + ' to exec ' + str(waitsipptime))
+                    time.sleep(waitsipptime)
+
+                self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
+                nctask = eadbshell(cmd=cmd, timeout=timeout)
+                nctask.run()
+            except:
+                etype = sys.exc_info()[0]
+                evalue = sys.exc_info()[1]
+                estr = str(etype) + ' ' + str(evalue)
+                self.logger.logger.info("Unexpected error: " + estr)
 
     def run(self):
         """
@@ -127,17 +164,25 @@ class TmtcUt(object):
         4. run nc
         :return:
         """
-        #FIXME: etask will block so should use multiprocessing instead!
+        #NOTE: etask will block so should use multiprocessing instead!
         # run tmtclient
         tmtcprocess = Process(target=self.tmtclientthread)
         tmtcprocess.daemon = True
         tmtcprocess.start()
-        # run SIPp xml series
 
+
+        # run SIPp xml series
         sippprocess = Process(target=self.sippthread)
         sippprocess.daemon = True
         sippprocess.start()
+
         # run nc
+        ncprocess = Process(target=self.ncthread)
+        ncprocess.daemon = True
+        ncprocess.start()
+
+
+        ncprocess.join()
         sippprocess.join()
         tmtcprocess.join()
 

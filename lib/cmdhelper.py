@@ -35,6 +35,7 @@ class cmdhelper:
         self.config = dict()
         self.logger = logConf()
         conffile = os.path.realpath(confdir) + '/config.json'
+
         try:
             with open(conffile, 'r') as conf:
                 self.config = json.load(conf)
@@ -45,6 +46,7 @@ class cmdhelper:
             self.logger.logger.error("Unexpected error:"+ estr)
             raise(CmdException(estr))
 
+        self.execdir = ''
 
         #extract info
         self.xmls = list()
@@ -65,10 +67,12 @@ class cmdhelper:
         ueconfig['execdir'] = "/data/data/ut/"
         ueconfig['config'] =  "provision.ini"
         ueconfig['binary'] = 'tmtclient'
+        ueconfig['startuptime'] = 3
         ueconfig['lib'] = [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
         ]
+
 
         if 'tmtcport' in self.config['ue']:
             ueconfig['tmtcport'] = self.config['ue']['tmtcport']
@@ -84,6 +88,11 @@ class cmdhelper:
 
         if 'lib' in self.config['ue']:
             ueconfig['lib'] = self.config['ue']['lib']
+
+        if 'startuptime' in self.config['ue']:
+            ueconfig['startuptime'] = self.config['ue']['startuptime']
+
+        self.execdir = ueconfig['execdir']
 
         return ueconfig
 
@@ -107,11 +116,10 @@ class cmdhelper:
 
                 if xml:
                     sippcmd = self.buildsipp(xml, timeout)
+                    self.sippcmds.append(sippcmd)
                 if tmtccmd:
                     nccmd = self.buildnc(tmtccmd)
-
-                self.sippcmds.append(sippcmd)
-                self.nccmds.append(nccmd)
+                    self.nccmds.append(nccmd)
 
             except:
                 #most likely KeyError
@@ -123,13 +131,16 @@ class cmdhelper:
 
     def buildsipp(self, xml='', timeout=None):
         """
-        adb shell sipp -sf reg.xml -p 5060 -t u1 -m 1 -trace_err
+        sipp -sf reg.xml -p 5060 -t u1 -m 1 -trace_err -trace_msg -message_file reg.msg -trace_shortmsg -shortmessage_file regshort.msg
         :return:
         """
-        #FIXME: there is no way to get sipp's return
         #
         sippcmd = cmdObj()
-        sippcmd['cmd'] = "adb shell sipp -sf " + xml + ' -p 5060 -t u1 -m 1 -trace_err'
+        prefix = xml.split('.')[0]
+        msgopt = " -trace_msg -message_file " + str(prefix) + ".msg "
+        shortmsgopt = " -trace_shortmsg -shortmessage_file " + str(prefix) + "short.msg "
+        cdcmd = "cd " + self.execdir
+        sippcmd['cmd'] = cdcmd + "&& sipp -sf " + xml + ' -p 5060 -t u1 -m 1 -trace_err ' + msgopt + shortmsgopt
         sippcmd['timeout'] = timeout
 
         return sippcmd
@@ -146,7 +157,7 @@ class cmdhelper:
             tmtcport = self.config['ue']['tmtcport']
 
         nccmd = cmdObj()
-        nccmd['cmd'] =  "adb shell echo -n " + cmd + ' | busybox nc 127.0.0.1 ' + str(tmtcport)
+        nccmd['cmd'] =  "echo -n " + cmd + ' | busybox nc 127.0.0.1 ' + str(tmtcport)
         #FIXME: nc should be responsed quickly, hardcoded here.
         nccmd['timeout'] = 1
         return nccmd
@@ -175,7 +186,8 @@ class cmdhelper:
 if __name__ == '__main__':
     cmd = cmdhelper(confdir="../cases/mt/")
     cmd.getDesc()
-    ueconfig = cmd.getUeConfig()
     cmd.buildCmd()
+    ueconfig = cmd.getUeConfig()
+
     cmd.printCmds()
 

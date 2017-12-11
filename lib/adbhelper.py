@@ -64,13 +64,14 @@ class adbhelper:
 #https://imsardine.wordpress.com/2012/06/05/android-adb-shell-exit-status/
 def adb_shell(shell_cmds):
     shell_cmds += '; echo $?'
+    #NOTE: double quote is a MUST?
     cmds = ['adb', 'shell', shell_cmds]
     stdout = subprocess.Popen(cmds, stdout=subprocess.PIPE).communicate()[0].rstrip()
 
     lines = stdout.splitlines()
     print repr(stdout), lines
     retcode = int(lines[-1])
-    if retcode !=0:
+    if retcode != 0:
         errmsg = 'failed to execute ADB shell commands (%i)' % retcode
         if len(lines) > 1: errmsg += '\n' + '\n'.join(lines[:-1])
         raise RuntimeError(errmsg)
@@ -93,6 +94,9 @@ class eadbshell:
         self.poller = select.epoll()
         self.wait = None
 
+        #only cmd's exit code is useful
+        self.cmdexit = -1
+
 
     def run(self):
         try:
@@ -111,31 +115,40 @@ class eadbshell:
             evalue = sys.exc_info()[1]
             self.logger.logger.info("Unexpected error: " + str(etype) + ' ,' + str(evalue))
 
+        if self.cmdexit != 0:
+            raise adbException(self.cmd + ' failed' )
+
+
 
     def waiter(self):
         while True:
             #non-blocking mode
             pairs = self.poller.poll(timeout=0)
             if len(pairs) != 0:
-                self.logger.logger.info("recv events {}".format(pairs))
+                self.logger.logger.info(self.cmd + " recv events {}".format(pairs))
                 for fd, status in pairs:
                     if status & select.EPOLLHUP:
                         #adb shell return code check
+                        #adb shell will return 0 once cmd is execed except receive signal interrupt
+                        #
                         stdout, stderr = self.sp.communicate()
                         self.logger.logger.info('recv hungup , adb shell ret code is ' + str(self.sp.returncode))
+                        self.cmdexit = self.sp.returncode
                         return
 
                     elif status & select.EPOLLIN:
+                        #NOTE: readlines will block until stream close
                         lines = self.sp.stdout.readlines()
-                        self.logger.logger.info(self.cmd + ' exit code is ' + lines[-1])
+                        exitcode = lines[-1].rstrip()
+                        self.logger.logger.info("<" + self.cmd + '> exit code is ' + exitcode)
                         #http://tldp.org/LDP/abs/html/exitcodes.html
                         #1: general error
                         #2: misuse of builtin
                         #127: cmd not found
-                        if lines[-1] == '0':
+                        if exitcode == '0':
                             self.logger.logger.info('exit successfully!')
-                            #EPOLLHUP will exit
-                            #return
+                            self.cmdexit = int(exitcode)
+                            return
 
 
 
@@ -178,6 +191,9 @@ if __name__ == '__main__':
     adbshell = eadbshell(cmd="sleep 7", timeout=3)
     adbshell.run()
 
+    #continous output
+    adbshell = eadbshell(cmd="ls -l && sleep 3 && ls -l", timeout=6)
+    adbshell.run()
 
     """
     try:

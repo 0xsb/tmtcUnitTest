@@ -42,6 +42,7 @@ class etask:
         self.curindex = 0
         self.returncode = [-1024] * retry
 
+
     def run(self):
         #start the real task
         for index in range(1, self.retry+1):
@@ -75,7 +76,7 @@ class etask:
         :return:
         """
         pairs = self.poller.poll()
-        self.logger.logger.info("recv hangup {}".format(pairs))
+        self.logger.logger.info(self.cmd + " recv hangup {}".format(pairs))
         for fd, status in pairs:
             if self.fds2procs:
                 curproc = self.fds2procs[fd]

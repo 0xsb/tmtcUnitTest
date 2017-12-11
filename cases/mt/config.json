@@ -10,6 +10,7 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
+      "startuptime": 3,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
@@ -21,7 +22,7 @@
     {
       "scenario": "Register",
       "xml": "reg.xml",
-      "timeout": 4,
+      "timeout": 10,
       "tmtccmd": "c-reg"
 
     },
@@ -29,7 +30,7 @@
     {
       "scenario": "Subscribe/Notify",
       "xml": "subs_notify.xml",
-      "timeout": 4,
+      "timeout": 10,
       "tmtccmd":  ""
     }
 
