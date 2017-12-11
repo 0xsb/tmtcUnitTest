@@ -14,7 +14,7 @@ import json
 import os
 from logConf import *
 from utjsonparser import *
-
+from time import gmtime, strftime
 
 class CmdException(Exception):
     def __init__(self, message):
@@ -35,7 +35,7 @@ class cmdhelper:
         self.config = dict()
         self.logger = logConf()
         conffile = os.path.realpath(confdir) + '/config.json'
-
+        self.timestamp = strftime("%H_%M_%S", gmtime())
         try:
             with open(conffile, 'r') as conf:
                 self.config = json.load(conf)
@@ -55,16 +55,26 @@ class cmdhelper:
         #real cmd list
         self.sippcmds = list()
         self.nccmds = list()
+        #ugly var
+        self.termcmd = None
+
 
     def getDesc(self):
         desc = self.config['description']
         self.logger.logger.info('scenario is ' + desc['scenario'])
         self.logger.logger.info('bug id is ' + str(desc['bugid']) + ', commit id is '+ str(desc['commitid']))
 
+
+    def getCasename(self):
+        return self.config['description']['casename']
+
+
     def getUeConfig(self):
         ueconfig = dict()
         ueconfig['tmtcport'] = 21904
-        ueconfig['execdir'] = "/data/data/ut/"
+        postfix = self.config['description']['casename'] + '_' + self.timestamp
+
+        ueconfig['execdir'] = "/data/data/ut/" + postfix
         ueconfig['config'] =  "provision.ini"
         ueconfig['binary'] = 'tmtclient'
         ueconfig['startuptime'] = 3
@@ -78,7 +88,7 @@ class cmdhelper:
             ueconfig['tmtcport'] = self.config['ue']['tmtcport']
 
         if 'execdir' in self.config['ue']:
-            ueconfig['execdir'] = self.config['ue']['execdir']
+            ueconfig['execdir'] = self.config['ue']['execdir'] + postfix
 
         if 'config' in self.config['ue']:
             ueconfig['config'] = self.config['ue']['config']
@@ -107,6 +117,7 @@ class cmdhelper:
                 xml = case['xml']
                 timeout = case['timeout']
                 tmtccmd = case['tmtccmd']
+                desc = case['desc']
                 self.xmls.append(xml)
                 self.timeouts.append(timeout)
 
@@ -115,7 +126,7 @@ class cmdhelper:
 
 
                 if xml:
-                    sippcmd = self.buildsipp(xml, timeout)
+                    sippcmd = self.buildsipp(xml, timeout,desc)
                     self.sippcmds.append(sippcmd)
                 if tmtccmd:
                     nccmd = self.buildnc(tmtccmd)
@@ -129,7 +140,8 @@ class cmdhelper:
                 self.logger.logger.error("Unexpected error:"+ estr)
                 raise(CmdException(estr))
 
-    def buildsipp(self, xml='', timeout=None):
+
+    def buildsipp(self, xml='', timeout=None, desc=None):
         """
         sipp -sf reg.xml -p 5060 -t u1 -m 1 -trace_err -trace_msg -message_file reg.msg -trace_shortmsg -shortmessage_file regshort.msg
         :return:
@@ -142,7 +154,7 @@ class cmdhelper:
         cdcmd = "cd " + self.execdir
         sippcmd['cmd'] = cdcmd + "&& sipp -sf " + xml + ' -p 5060 -t u1 -m 1 -trace_err ' + msgopt + shortmsgopt
         sippcmd['timeout'] = timeout
-
+        sippcmd['desc'] = desc
         return sippcmd
 
     def buildnc(self, cmd=''):
@@ -174,6 +186,14 @@ class cmdhelper:
     def getnccmds(self):
         return self.nccmds
 
+    def gettermcmd(self):
+        self.termcmd = cmdObj()
+        tmtcport = 21904
+        if 'tmtcport' in self.config['ue']:
+            tmtcport = self.config['ue']['tmtcport']
+        self.termcmd['cmd'] = "echo -n exit" + ' | busybox nc 127.0.0.1 ' + str(tmtcport)
+        self.termcmd['timeout'] = 1
+        return self.termcmd
 
     def printCmds(self):
 

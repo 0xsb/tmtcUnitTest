@@ -146,7 +146,7 @@ class eadbshell:
                         #2: misuse of builtin
                         #127: cmd not found
                         if exitcode == '0':
-                            self.logger.logger.info('exit successfully!')
+                            self.logger.logger.info(self.cmd + ' exit successfully!')
                             self.cmdexit = int(exitcode)
                             return
 

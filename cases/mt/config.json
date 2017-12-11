@@ -2,7 +2,8 @@
   "description": {
       "scenario" : "<UE MT call SIPp>",
       "bugid" : "123456",
-      "commitid" : "abcdefg"
+      "commitid" : "abcdefg",
+      "casename" : "Demo"
   },
 
   "ue": {
@@ -20,7 +21,7 @@
 
   "cases": [
     {
-      "scenario": "Register",
+      "desc": "Register",
       "xml": "reg.xml",
       "timeout": 10,
       "tmtccmd": "c-reg"
@@ -28,7 +29,7 @@
     },
 
     {
-      "scenario": "Subscribe/Notify",
+      "desc": "Subscribe/Notify",
       "xml": "subs_notify.xml",
       "timeout": 10,
       "tmtccmd":  ""
