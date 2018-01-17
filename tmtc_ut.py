@@ -249,9 +249,9 @@ class TmtcUt(object):
         """
         #NOTE: etask will block so should use multiprocessing instead!
         # run tmtclient
-        #tmtcprocess = Process(target=self.tmtclientthread)
-        #tmtcprocess.daemon = True
-        #tmtcprocess.start()
+        tmtcprocess = Process(target=self.tmtclientthread)
+        tmtcprocess.daemon = True
+        tmtcprocess.start()
 
 
         # run SIPp xml series
