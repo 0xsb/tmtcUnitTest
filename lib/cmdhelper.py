@@ -68,6 +68,12 @@ class cmdhelper:
     def getCasename(self):
         return self.config['description']['casename']
 
+    def getConfDelta(self):
+        """
+        provision.ini delta value
+        :return:
+        """
+        pass
 
     def getUeConfig(self):
         ueconfig = dict()

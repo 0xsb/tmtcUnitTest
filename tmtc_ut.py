@@ -69,6 +69,26 @@ class TmtcUt(object):
         self.adb.initDevice()
 
 
+    def checkFile(self, file):
+        """
+        used to avoid duplicated push library or exes
+        :return:
+        """
+        # file exist, check md5
+        md5file = file + '.md5'
+        if os.path.exists(md5file):
+            with open(md5file, 'r') as mfile:
+                oldmd5val = mfile.read()
+                newmd5val = self.utils.md5sum(file)
+            if newmd5val != oldmd5val:
+                with open(md5file, 'w+') as mfile:
+                    mfile.write(newmd5val)
+        else:
+            #not exist, write md5
+            md5val = self.utils.md5sum(file)
+            with open(md5file, 'w+') as mfile:
+                mfile.write(md5val)
+
     def envsetup(self):
         desc = self.cmdenv.getDesc()
         casename = self.cmdenv.getCasename()
@@ -78,11 +98,18 @@ class TmtcUt(object):
         #UE binary: tmtclicent, libavatar_ut.so, liblemon_ut.so,
         bindir = os.path.realpath(self.bindir)
         binary = bindir + '/' + ueconfig['binary']
-        self.adb.push(binary, "/system/bin/")
+        new = self.checkFile(binary)
+
+        if new:
+            self.adb.push(binary, "/system/bin/")
         for index, lib in enumerate(ueconfig['lib']):
             lib = bindir + '/' + lib
-            self.adb.push(lib, "/system/lib/")
+            new = self.checkFile(lib)
+            if new:
+                self.adb.push(lib, "/system/lib/")
+
         #UE config: provision.ini
+        #TODO: later may add delta provision.ini
         proini = bindir + '/' + ueconfig['config']
         execdir = ueconfig['execdir']
         self.execdir = execdir
@@ -189,7 +216,7 @@ class TmtcUt(object):
         """
         nccmds = self.cmdenv.getnccmds()
         sippcmds = self.cmdenv.getsippcmds()
-        time.sleep( self.ueconfig['startuptime'])
+        time.sleep(self.ueconfig['startuptime'])
         for index, nccmd in enumerate(nccmds):
             cmd = nccmd['cmd']
             timeout = nccmd['timeout']

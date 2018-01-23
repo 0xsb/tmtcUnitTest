@@ -4,6 +4,8 @@
 import os
 import re
 import errno
+import hashlib
+import sys
 from datetime import datetime
 
 
@@ -121,6 +123,18 @@ class logutils():
             fruit['pid'] = None
         return fruit
 
+    def md5sum(self, file=''):
+        try:
+            fd = open(file, 'rb')
+            content = fd.read()
+            fd.close()
+            md5 = hashlib.md5(content).hexdigest()
+            return md5
+        except:
+            etype = sys.exc_info()[0]
+            evalue = sys.exc_info()[1]
+            estr = str(etype) + ' ' + str(evalue)
+            raise RuntimeError(estr)
 
 
 if __name__ == "__main__":
@@ -133,4 +147,4 @@ if __name__ == "__main__":
 
     endstr = "09-01 17:08:10.120"
     end = lutils.converttime(endstr)
-    lutils.getduation(begin, end)
+    print lutils.md5sum("./logutils.py")
