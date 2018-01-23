@@ -45,10 +45,13 @@ class adbhelper:
         self.adbCmd(adbroot, retry=3)
         self.adbCmd(adbremount, retry=3)
 
+    def pull(self, destdir, localdir):
+        adbpull = "adb pull -p -a " + destdir + ' ' + localdir
+        self.adbCmd(adbpull)
 
     def push(self, filename, destdir):
         #adb push file dest
-        adbpush = "adb push " + filename + ' ' + destdir
+        adbpush = "adb push -p " + filename + ' ' + destdir
         self.adbCmd(adbpush)
 
     def mkdirp(self, filename):
@@ -86,7 +89,7 @@ just write a class to copy etask, but add special handling to check shell exit
 
 """
 class eadbshell:
-    def __init__(self, cmd='', timeout=None):
+    def __init__(self, cmd='', timeout=1):
         #manually print exit code, remove \n
         self.cmd = cmd + '; echo -n $?'
         self.timeout = int(timeout)
@@ -132,8 +135,8 @@ class eadbshell:
                         #adb shell will return 0 once cmd is execed except receive signal interrupt
                         #
                         stdout, stderr = self.sp.communicate()
-                        self.logger.logger.info('recv hungup , adb shell ret code is ' + str(self.sp.returncode))
-                        self.cmdexit = self.sp.returncode
+                        #self.logger.logger.info('recv hungup , adb shell ret code is ' + str(self.sp.returncode))
+                        #self.cmdexit = self.sp.returncode
                         return
 
                     elif status & select.EPOLLIN:
@@ -149,7 +152,9 @@ class eadbshell:
                             self.logger.logger.info(self.cmd + ' exit successfully!')
                             self.cmdexit = int(exitcode)
                             return
-
+                        else:
+                            self.cmdexit = int(exitcode)
+                            self.logger.logger.info(self.cmd + ' failed.')
 
 
     def getResult(self):

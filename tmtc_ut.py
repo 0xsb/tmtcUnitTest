@@ -122,6 +122,24 @@ class TmtcUt(object):
             xml = brickdir + '/' + xml
             self.adb.push(xml, execdir)
 
+    def getLog(self):
+        casestamp = self.execdir.split('/')[-1]
+        outputdir = self.outdir + '/' + casestamp
+        self.utils.mkdirp(outputdir)
+        self.adb.pull(destdir=self.execdir,localdir=outputdir)
+
+    def killtmtc(self):
+        #stop tmtclient
+        stoptmtc = "killall tmtclient"
+        try:
+            stoptask = eadbshell(cmd=stoptmtc)
+            stoptask.run()
+        except:
+            etype = sys.exc_info()[0]
+            evalue = sys.exc_info()[1]
+            estr = str(etype) + ' ' + str(evalue)
+            self.logger.logger.info("Unexpected error: " + estr)
+
 
     def termtmtc(self):
         #adb shell echo -n exit | busybox nc 127.0.0.1 21904
@@ -207,7 +225,7 @@ class TmtcUt(object):
         #so do the check in sipp process
         # add case result check
         self.checkResult()
-        self.termtmtc()
+        #self.termtmtc()
 
     def ncthread(self):
         """
@@ -294,7 +312,11 @@ class TmtcUt(object):
         ncprocess.join()
         sippprocess.join()
 
-        #tmtcprocess.join()
+        self.killtmtc()
+        tmtcprocess.join()
+
+        #get log
+        self.getLog()
 
 
 if __name__ == '__main__':

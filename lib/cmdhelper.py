@@ -15,6 +15,7 @@ import os
 from logConf import *
 from utjsonparser import *
 from time import gmtime, strftime
+import re
 
 class CmdException(Exception):
     def __init__(self, message):
@@ -78,7 +79,9 @@ class cmdhelper:
     def getUeConfig(self):
         ueconfig = dict()
         ueconfig['tmtcport'] = 21904
-        postfix = self.config['description']['casename'] + '_' + self.timestamp
+        #if there is space in casename, replace it with _
+        newcasename =  re.sub(r'[\s+]', '_', self.config['description']['casename'])
+        postfix = newcasename + '_' + self.timestamp
 
         ueconfig['execdir'] = "/data/data/ut/" + postfix
         ueconfig['config'] =  "provision.ini"
@@ -124,6 +127,10 @@ class cmdhelper:
                 timeout = case['timeout']
                 tmtccmd = case['tmtccmd']
                 desc = case['desc']
+                opts = ''
+                if 'opts' in case:
+                    opts = case['opts']
+
                 self.xmls.append(xml)
                 self.timeouts.append(timeout)
 
@@ -132,7 +139,7 @@ class cmdhelper:
 
 
                 if xml:
-                    sippcmd = self.buildsipp(xml, timeout,desc)
+                    sippcmd = self.buildsipp(xml, timeout,desc, opts=opts)
                     self.sippcmds.append(sippcmd)
                 if tmtccmd:
                     nccmd = self.buildnc(tmtccmd)
@@ -147,9 +154,10 @@ class cmdhelper:
                 raise(CmdException(estr))
 
 
-    def buildsipp(self, xml='', timeout=None, desc=None):
+    def buildsipp(self, xml='', timeout=None, desc=None, opts=''):
         """
         sipp -sf reg.xml -p 5060 -t u1 -m 1 -trace_err -trace_msg -message_file reg.msg -trace_shortmsg -shortmessage_file regshort.msg
+        sipp -sf mt_815908.xml 127.0.0.1:5065 -p 5060 -t u1 -m 1 -trace_err -trace_msg -message_file mt.msg -trace_shortmsg -shortmessage_file mtshort.msg
         :return:
         """
         #
@@ -158,7 +166,7 @@ class cmdhelper:
         msgopt = " -trace_msg -message_file " + str(prefix) + ".msg "
         shortmsgopt = " -trace_shortmsg -shortmessage_file " + str(prefix) + "short.msg "
         cdcmd = "cd " + self.execdir
-        sippcmd['cmd'] = cdcmd + "&& sipp -sf " + xml + ' -p 5060 -t u1 -m 1 -trace_err ' + msgopt + shortmsgopt
+        sippcmd['cmd'] = cdcmd + "&& sipp -sf " + xml + ' ' + opts + ' -p 5060 -t u1 -m 1 -trace_err ' + msgopt + shortmsgopt
         sippcmd['timeout'] = timeout
         sippcmd['desc'] = desc
         return sippcmd

@@ -136,6 +136,9 @@ class logutils():
             estr = str(etype) + ' ' + str(evalue)
             raise RuntimeError(estr)
 
+    def replaceSpace(self, src, char):
+        return re.sub(r'[\s+]', char, src)
+
 
 if __name__ == "__main__":
     lutils = logutils()

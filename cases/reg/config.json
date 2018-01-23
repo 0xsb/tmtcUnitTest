@@ -1,9 +1,9 @@
 {
   "description": {
-      "scenario" : "<UE MT call SIPp>",
+      "scenario" : "<UE Register and Subs>",
       "bugid" : "123456",
       "commitid" : "abcdefg",
-      "casename" : "Demo"
+      "casename" : "RegSub"
   },
 
   "ue": {
