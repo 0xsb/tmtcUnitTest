@@ -318,6 +318,7 @@ class TmtcUt(object):
         #get log
         self.getLog()
 
+        #analyze logs
 
 if __name__ == '__main__':
     tmtc = TmtcUt(confdir="cases/mt/", brickdir="cases/bricks/",bindir="bin")

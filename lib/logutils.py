@@ -140,6 +140,14 @@ class logutils():
         return re.sub(r'[\s+]', char, src)
 
 
+    def revertdict(self, orig):
+        if orig:
+            #https://stackoverflow.com/questions/483666/python-reverse-invert-a-mapping
+            return {v: k for k, v in orig.iteritems()}
+        else:
+            return None
+
+
 if __name__ == "__main__":
     lutils = logutils()
     line = "02D429 08-31 16:18:20.260  4117  4286 I MME     : 16:18:20.260 MVD: INFO: StrmOpen rtp timeout 5 "
