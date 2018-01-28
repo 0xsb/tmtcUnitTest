@@ -48,9 +48,8 @@ class SipParser(object):
 
         seperator = SipPattern['seperator']
         sdpbody = list()
-
         for index, line in enumerate(msg):
-            print line
+            print line,
             if self.parseReq(line):
                 continue
 
@@ -62,7 +61,6 @@ class SipParser(object):
 
             if seperator in line:
                 #need to check Content-Type and Content-Length
-
                 if 'Content-Type' in self.sipmsg['headers'] and 'Content-Length' in self.sipmsg['headers']:
                     ct = self.sipmsg['headers']['Content-Type']
                     cl = self.sipmsg['headers']['Content-Length']
@@ -112,13 +110,13 @@ class SipParser(object):
         if headerline:
             header = headerline.group(1).strip()
             content = headerline.group(2).strip()
-            oneheader = dict()
             if header in SipCompactReverse:
                 #if abbr header, use full name
                 header = SipCompactReverse[header]
 
             self.sipmsg['headers'][header] = content
-
+            return True
+        return False
 
     def parseSdp(self, sdp):
         # Content-Type is application/sdp

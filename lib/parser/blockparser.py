@@ -46,9 +46,10 @@ class BlockParser(object):
                   + str(block['startnum']) + '-' + str(block['endnum'])
 
         for msg in self.msgs:
-            print msg['content']
+            print 'original content is ' + repr(msg['content'])
             sp = sipparser.SipParser()
-            sp.parse(msg=msg)
+            sp.parse(msg=msg['content'])
+            sp.dumpmsg()
 
     def getmsg(self):
         return self.msgs
