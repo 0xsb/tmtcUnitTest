@@ -20,6 +20,7 @@ class Block(dict):
         self['endnum'] = 0
         self['direct'] = None
         self['size'] = 0
+        self['text'] = None
 
 class bparserException(Exception):
     def __init__(self, msg):
@@ -32,7 +33,6 @@ class BlockParser(object):
         self.file = srcfile
         self.lines = list()
         self.blocks = list()
-        self.msgs = list()
 
         if os.path.exists(self.file):
             with open(self.file, 'r') as mfile:
@@ -44,17 +44,13 @@ class BlockParser(object):
         for block in self.blocks:
             print 'direct is ' + block['direct'] + ', start to end is ' \
                   + str(block['startnum']) + '-' + str(block['endnum'])
-
-        for msg in self.msgs:
-            print 'original content is ' + repr(msg['content'])
             sp = sipparser.SipParser()
-            sp.parse(msg=msg['content'])
+            sp.prepare(block)
+            sp.parse()
             sp.dumpmsg()
 
-    def getmsg(self):
-        return self.msgs
-
     def parse(self):
+        #pattern is from sipp's msg format
         recvpattern = "message received \[(\d+)\] bytes"
         recvregex = re.compile(recvpattern)
         sendpatern = "message sent \((\d+) bytes\)"
@@ -92,6 +88,7 @@ class BlockParser(object):
                 oneblock['endnum'] = endnum
                 oneblock['size'] = size
                 oneblock['direct'] = direct
+                oneblock['text'] = self.lines[oneblock['startnum']:oneblock['endnum']]
                 self.blocks.append(oneblock)
                 #print 'index is ' + str(oneblock['endnum'])
 
@@ -101,15 +98,10 @@ class BlockParser(object):
             oneblock['endnum'] = len(self.lines)
             oneblock['size'] = size
             oneblock['direct'] = direct
+            oneblock['text'] = self.lines[oneblock['startnum']:oneblock['endnum']]
             self.blocks.append(oneblock)
 
 
-        for block in self.blocks:
-            msg = dict()
-            msg['direct'] = block['direct']
-            msg['size'] = block['size']
-            msg['content'] = self.lines[block['startnum']: block['endnum']]
-            self.msgs.append(msg)
 
 
 

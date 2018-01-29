@@ -18,6 +18,10 @@ from logConf import *
 class SipMsg(dict):
     def __init__(self, *arg, **kw):
         super(SipMsg, self).__init__(*arg, **kw)
+        self['text'] = None
+        self['direct'] = None
+        self['size'] = 0
+
         self['reqline'] = dict()
         self['reqline']['line'] = None
         self['reqline']['method'] = None
@@ -37,19 +41,31 @@ class SipParser(object):
         self.sipmsg = None
         self.logger = logConf()
 
-    def parse(self, msg):
+    def prepare(self, block):
+        """
+        not necessary
+        set text, size, direct
+        :param block:
+        :return:
+        """
+        self.sipmsg = SipMsg()
+        self.sipmsg['direct'] = block['direct']
+        self.sipmsg['size'] = block['size']
+        self.sipmsg['text'] = block['text']
+
+    def parse(self):
         # req/rsp line come first
         # parse header
         # \r\n is the seperator of content
         # only parse sdp
-        self.sipmsg = SipMsg()
 
+        msg = self.sipmsg['text']
         sdpregex = re.compile(SipPattern['sdppattern'])
 
         seperator = SipPattern['seperator']
         sdpbody = list()
         for index, line in enumerate(msg):
-            print line,
+            print line
             if self.parseReq(line):
                 continue
 
@@ -135,6 +151,9 @@ class SipParser(object):
 
 if __name__ == '__main__':
     sp = SipParser()
+    oneblock = dict()
+    oneblock['direct'] = 'send'
+    oneblock['size'] = 123
     onereq = list()
     onereq.append("INVITE sip:service@127.0.0.1:5065 SIP/2.0")
     onereq.append("v: SIP/2.0/UDP 127.0.0.1:5060;branch=z9hG4bK-22142-1-0")
@@ -145,15 +164,20 @@ if __name__ == '__main__':
     onereq.append('v=0')
     onereq.append('o=user1 53655765 2353687637 IN IP4 127.0.0.1')
     onereq.append('s=-')
-
-    for index, req in enumerate(onereq):
-        print req
-    sp.parse(msg=onereq)
+    oneblock['text'] = onereq
+    sp.prepare(oneblock)
+    sp.parse()
     sp.dumpmsg()
+
+    sp = SipParser()
+    oneblock['direct'] = 'recv'
+    oneblock['size'] = 123
     onersp = list()
     onersp.append("SIP/2.0 100 Trying")
     onersp.append("To: sut <sip:service@127.0.0.1:5065>")
-    sp.parse(msg=onersp)
+    oneblock['text'] = onersp
+    sp.prepare(oneblock)
+    sp.parse()
     sp.dumpmsg()
 
     #add sdp later
