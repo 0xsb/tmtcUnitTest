@@ -33,6 +33,7 @@ class BlockParser(object):
         self.file = srcfile
         self.lines = list()
         self.blocks = list()
+        self.msgs = list()
 
         if os.path.exists(self.file):
             with open(self.file, 'r') as mfile:
@@ -47,7 +48,12 @@ class BlockParser(object):
             sp = sipparser.SipParser()
             sp.prepare(block)
             sp.parse()
-            sp.dumpmsg()
+            onesip = sp.getmsg()
+            self.msgs.append(onesip)
+            #sp.dumpmsg()
+
+        for msg in enumerate(self.msgs):
+            print repr(msg)
 
     def parse(self):
         #pattern is from sipp's msg format
