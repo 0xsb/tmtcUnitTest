@@ -41,7 +41,7 @@ SipPattern['rspline'] = "SIP/2.0 (\d+) (.*)"
 SipPattern['headerline'] = "(.*?):(.*)"
 SipPattern['sdppattern'] = "(.)=(.*)"
 SipPattern['seperator'] = '\r\n'
-
+SipPattern['mediapattern'] = "m=(audio|video)"
 
 SipContent = dict()
 SipContent['sdp'] = "application/sdp"
