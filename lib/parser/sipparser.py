@@ -12,6 +12,7 @@ import sys
 from sipconstants import *
 path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(path+'/../'))
+from sdpparser import *
 
 from logConf import *
 
@@ -34,12 +35,30 @@ class SipMsg(dict):
         self['content'] = dict()
         self['content']['size'] = 0
         self['content']['body'] = None
+        self['content']['type'] = None
 
+        self['sdp'] = dict()
+
+    def getsdp(self):
+        return self['sdp']
+
+    def getreqline(self):
+        return self['reqline']['line']
+
+    def getrspline(self):
+        return self['rspline']['line']
+
+    def getheader(self, headname):
+        #NOTE: headname is full name , no abbr here!
+        if headname in self['headers']:
+            return self['headers'][headname]
+        return None
 
 class SipParser(object):
     def __init__(self):
         self.sipmsg = None
         self.logger = logConf()
+        self.sdpparser = SdpParser()
 
     def prepare(self, block):
         """
@@ -60,10 +79,8 @@ class SipParser(object):
         # only parse sdp
 
         msg = self.sipmsg['text']
-        sdpregex = re.compile(SipPattern['sdppattern'])
-
         seperator = SipPattern['seperator']
-        sdpbody = list()
+
         for index, line in enumerate(msg):
             print line
             if self.parseReq(line):
@@ -83,13 +100,17 @@ class SipParser(object):
                     self.logger.logger.info('content length is ' + str(cl) + ', content type is ' + str(ct))
                     if ct == "application/sdp" and int(cl) >= 0:
                         #only parse sdp
+                        self.sipmsg['content']['type'] = "application/sdp"
                         self.sipmsg['content']['size'] = cl
-                        self.sipmsg['content']['body'] = msg[index + 1:len(msg)]
+                        self.sipmsg['content']['body'] = msg[index+1:len(msg)]
                 break
 
 
-        if sdpbody:
-            self.parseSdp(sdpbody)
+        if self.sipmsg['content']['type'] == "application/sdp":
+            #FIXME: current only sdp is parsed
+            self.sdpparser.parse(msg=self.sipmsg['content']['body'])
+            sdp = self.sdpparser.getsdp()
+            self.sipmsg['sdp'] = sdp
 
     def parseReq(self, line):
         reqregex = re.compile(SipPattern['reqline'])
@@ -126,6 +147,7 @@ class SipParser(object):
         if headerline:
             header = headerline.group(1).strip()
             content = headerline.group(2).strip()
+
             if header in SipCompactReverse:
                 #if abbr header, use full name
                 header = SipCompactReverse[header]
@@ -133,11 +155,6 @@ class SipParser(object):
             self.sipmsg['headers'][header] = content
             return True
         return False
-
-    def parseSdp(self, sdp):
-        # Content-Type is application/sdp
-        # Content-Length is not 0
-        pass
 
     def parseXml(self, xml):
         #TODO: later

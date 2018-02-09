@@ -198,11 +198,11 @@ class SdpParser(object):
     def parseAttr(self):
         pass
 
-    def parseMediaPl(self):
+    def parseMediaPayload(self):
         pass
 
     def getsdp(self):
-        pass
+        return self.sdpmsgs
 
     def dump(self):
         for sdpmsg in self.sdpmsgs:

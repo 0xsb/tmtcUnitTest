@@ -11,7 +11,10 @@ import os
 import sys
 import re
 import sipparser
+path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(path+'/../'))
 
+from logConf import *
 
 class Block(dict):
     def __init__(self, *arg, **kw):
@@ -34,6 +37,7 @@ class BlockParser(object):
         self.lines = list()
         self.blocks = list()
         self.msgs = list()
+        self.logger = logConf()
 
         if os.path.exists(self.file):
             with open(self.file, 'r') as mfile:
@@ -52,8 +56,24 @@ class BlockParser(object):
             self.msgs.append(onesip)
             #sp.dumpmsg()
 
-        for msg in enumerate(self.msgs):
-            print repr(msg)
+        for msg in self.msgs:
+            #self.logger.logger.info('msg is ' + repr(msg))
+            if msg['direct'] == 'send':
+                self.logger.logger.info('req line is ' + msg.getreqline())
+                self.logger.logger.info('callid is ' + msg.getheader('Call-ID'))
+                sdp = msg.getsdp()
+                if sdp:
+                    self.logger.logger.info('sdp is ' + repr(sdp))
+
+            elif msg['direct'] == 'recv':
+                self.logger.logger.info('rsp line is ' + msg.getrspline())
+                self.logger.logger.info('callid is ' + msg.getheader('Call-ID'))
+                sdp = msg.getsdp()
+                if sdp:
+                    self.logger.logger.info('sdp is ' + repr(sdp))
+
+            self.logger.logger.info('---------------------------------------')
+
 
     def parse(self):
         #pattern is from sipp's msg format

@@ -31,5 +31,10 @@
     add config options in config.json
 3. case category: reg, sip, sdp
 3.1 tag, db support
-4. sip/sdp parse
-5. report gen
+4. log check
+4.1 Tmtc_MtcCbSessCallIn check
+5. sip/sdp parse
+6. report gen
+7. case gen
+7.1 pause to emulate UE retransmit
+7.2 just resend in sipp xml
