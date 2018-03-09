@@ -36,7 +36,7 @@ class cmdhelper:
         self.config = dict()
         self.logger = logConf()
         conffile = os.path.realpath(confdir) + '/config.json'
-        self.timestamp = strftime("%H_%M_%S", gmtime())
+        self.timestamp = strftime("%Y_%m_%d_%H_%M_%S", gmtime())
         try:
             with open(conffile, 'r') as conf:
                 self.config = json.load(conf)
@@ -59,6 +59,8 @@ class cmdhelper:
         #ugly var
         self.termcmd = None
 
+    def gettimestamp(self):
+        return self.timestamp
 
     def getDesc(self):
         desc = self.config['description']

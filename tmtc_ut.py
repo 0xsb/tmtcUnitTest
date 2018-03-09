@@ -128,11 +128,11 @@ class TmtcUt(object):
         self.utils.mkdirp(outputdir)
         self.adb.pull(destdir=self.execdir,localdir=outputdir)
 
-    def killtmtc(self):
+    def killprocess(self, pname):
         #stop tmtclient
-        stoptmtc = "killall tmtclient"
+        killp = "killall " + pname
         try:
-            stoptask = eadbshell(cmd=stoptmtc)
+            stoptask = eadbshell(cmd=killp)
             stoptask.run()
         except:
             etype = sys.exc_info()[0]
@@ -256,6 +256,27 @@ class TmtcUt(object):
                 estr = str(etype) + ' ' + str(evalue)
                 self.logger.logger.info("Unexpected error: " + estr)
 
+    # start a thread to collect main log
+    # main log can be used to collect media cmd,
+    def logcatthread(self):
+        timeouts = self.cmdenv.gettimeouts()
+        #logcat timeout is the sum of all timeout plus
+        curtimeout = self.ueconfig['startuptime'] + 2
+        for index, timeout in enumerate(timeouts):
+            curtimeout = curtimeout + timeout
+
+
+        logcatdmc = 'adb shell logcat -b main >' + self.execdir + '/main_' + self.cmdenv.gettimestamp() + '.log'
+
+        try:
+            self.logger.logger.info('NOTE: start to run '+ logcatdmc + ' with timeout ' + str(curtimeout))
+            tmtctask = etask(cmd=logcatdmc, timeout=curtimeout, retry=1)
+            tmtctask.run()
+        except:
+            etype = sys.exc_info()[0]
+            evalue = sys.exc_info()[1]
+            estr = str(etype) + ' ' + str(evalue)
+            self.logger.logger.info("Unexpected error: " + estr)
 
     def printReport(self):
         #TODO: maybe print all result in html file
@@ -293,6 +314,11 @@ class TmtcUt(object):
         :return:
         """
         #NOTE: etask will block so should use multiprocessing instead!
+        #run logcat thread
+        logcatprocess = Process(target=self.logcatthread)
+        logcatprocess.daemon = True
+        logcatprocess.start()
+
         # run tmtclient
         tmtcprocess = Process(target=self.tmtclientthread)
         tmtcprocess.daemon = True
@@ -312,8 +338,12 @@ class TmtcUt(object):
         ncprocess.join()
         sippprocess.join()
 
-        self.killtmtc()
+        #kill tmtclient
+        self.killprocess(pname=self.ueconfig['binary'])
         tmtcprocess.join()
+
+        self.killprocess(pname="logcat")
+        logcatprocess.join()
 
         #get log
         self.getLog()

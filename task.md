@@ -31,7 +31,7 @@
     add config options in config.json
 3. case category: reg, sip, sdp
 3.1 tag, db support
-4. log check
+4. log check, adb logcat -b main 
 4.1 Tmtc_MtcCbSessCallIn check
 5. sip/sdp parse
 6. report gen
