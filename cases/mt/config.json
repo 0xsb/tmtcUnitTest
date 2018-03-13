@@ -1,10 +1,10 @@
 {
   "description": {
-      "scenario" : "<UE Register and Subs>",
+      "scenario" : "<UE MT call SIPp>",
       "bugid" : "123456",
       "commitid" : "abcdefg",
-      "catagory" : "Registration",
-      "casename" : "RegSub"
+      "category" : "Call",
+      "casename" : "MT call"
   },
 
   "ue": {
@@ -34,8 +34,15 @@
       "xml": "subs_notify.xml",
       "timeout": 10,
       "tmtccmd":  ""
-    }
+    },
 
+    {
+      "desc": "MT call",
+      "xml": "mt.xml",
+      "timeout": 10,
+      "tmtccmd":  "",
+      "opts": " 127.0.0.1:5065"
+    }
   ]
 
 }

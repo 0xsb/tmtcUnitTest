@@ -6,10 +6,11 @@ from lib.adbhelper import *
 from lib.logutils import *
 from lib.cmdhelper import *
 from lib.logConf import *
+import datetime
 import sys
 import os
-from multiprocessing import Process
-
+from multiprocessing import Process, Manager, Value
+from lib.report import *
 
 # 1. env setup
 # 2. process goes
@@ -19,27 +20,6 @@ class utException(Exception):
     def __init__(self, msg):
         super(utException, self).__init__(msg)
         self.message = msg
-
-class reportObj(dict):
-    def __init__(self, *arg, **kw):
-        self['result'] = None
-        self['desc'] = None
-        self['cmd'] = None
-        self['timeout'] = None
-        super(reportObj, self).__init__(*arg, **kw)
-
-
-    def addresult(self,result):
-        self['result'] =  result
-
-    def adddesc(self,desc):
-        self['desc'] = desc
-
-    def addcmd(self, cmd):
-        self['cmd'] = cmd
-
-    def addtimeout(self,timeout):
-        self['timeout'] = timeout
 
 
 class TmtcUt(object):
@@ -51,8 +31,12 @@ class TmtcUt(object):
         self.bindir = bindir
         self.utils = logutils()
 
-        #process report
-        self.report = list()
+        self.starttime = datetime.datetime.now()
+        self.endtime = 0
+
+        #whole case report
+        self.casereport = report()
+
 
         """
         1. parse conf
@@ -90,8 +74,7 @@ class TmtcUt(object):
                 mfile.write(md5val)
 
     def envsetup(self):
-        desc = self.cmdenv.getDesc()
-        casename = self.cmdenv.getCasename()
+        scenario = self.cmdenv.getDesc()
         xmls = self.cmdenv.getxmls()
         ueconfig = self.ueconfig
         #push ue's res
@@ -124,6 +107,7 @@ class TmtcUt(object):
 
     def getLog(self):
         casestamp = self.execdir.split('/')[-1]
+        #casestamp is like MT_call_2018_xxxx
         outputdir = self.outdir + '/' + casestamp
         self.utils.mkdirp(outputdir)
         self.adb.pull(destdir=self.execdir,localdir=outputdir)
@@ -181,12 +165,9 @@ class TmtcUt(object):
             evalue = sys.exc_info()[1]
             estr = str(etype) + ' ' + str(evalue)
             self.logger.logger.info("Unexpected error: " + estr)
-
-
         #add one more cmd to exit zsh
 
-
-    def sippthread(self):
+    def sippthread(self, sharedreport):
         """
         sipp xml thread
         :return:
@@ -195,7 +176,14 @@ class TmtcUt(object):
 
         #multiprocess , ue need time to start
         time.sleep(self.ueconfig['startuptime'])
+        #initialize report default value
+        for index, sippcmd in enumerate(sippcmds):
+            cmd = sippcmd['cmd']
+            timeout = sippcmd['timeout']
+            desc = sippcmd['desc']
 
+
+        #run the cmd
         for index, sippcmd in enumerate(sippcmds):
             cmd = sippcmd['cmd']
             timeout = sippcmd['timeout']
@@ -205,13 +193,17 @@ class TmtcUt(object):
                 sipptask = eadbshell(cmd=cmd, timeout=timeout)
                 sipptask.run()
                 #NOTE: if reach here, case PASS.
-                onereport = reportObj()
-                onereport.addresult(True)
-                onereport.addcmd(cmd)
-                onereport.addtimeout(timeout)
-                onereport.adddesc(desc)
-                self.report.append(onereport)
-                self.logger.logger.error('report num is ' + str(len(self.report)))
+                # CAUTION: https://stackoverflow.com/questions/38703907/modify-a-list-in-multiprocessing-pools-manager-dict
+                # seems manager list becomes immutable
+                # will only append once and NEVER changed.
+                onereport = subreport()
+
+                onereport.setresult(True)
+                onereport.setcmd(cmd)
+                onereport.settimeout(timeout)
+                onereport.setdesc(desc)
+                sharedreport.append(onereport)
+                self.logger.logger.info('case ' + repr(index + 1) + ' result is ' + repr(onereport.getresult()))
             except:
                 etype = sys.exc_info()[0]
                 evalue = sys.exc_info()[1]
@@ -221,10 +213,9 @@ class TmtcUt(object):
                 raise utException('case ' + str(index+1) + ' failed\n error is ' + estr)
 
         #CAUTION: multiprocessing variable is not shared
-        #FIXME: maybe use Manager in future
         #so do the check in sipp process
         # add case result check
-        self.checkResult()
+        #self.checkResult()
         #self.termtmtc()
 
     def ncthread(self):
@@ -278,32 +269,42 @@ class TmtcUt(object):
             estr = str(etype) + ' ' + str(evalue)
             self.logger.logger.info("Unexpected error: " + estr)
 
-    def printReport(self):
-        #TODO: maybe print all result in html file
-        sippcmds = self.cmdenv.getsippcmds()
-        casenum = len(sippcmds)
-        passnum = len(self.report)
-        index = 0
-        while index < passnum:
-            self.logger.logger.info('Case '+ str(index + 1) + ": " + self.report[index]['desc'] + " Pass")
-            index = index + 1
-
-        while index < casenum:
-            self.logger.logger.info('Case '+ str(index + 1) + ": " + sippcmds[index]['desc'] + " Failed")
-            index = index + 1
 
     def checkResult(self):
         #just compare the case number.
         casenum = len(self.cmdenv.getsippcmds())
-        self.logger.logger.info('report is ' + repr(self.report))
-        passnum = len(self.report)
+        subreports = self.casereport.getsubreports()
+        #CAUTION: listProxy is not return list values when using repr
+        #self.logger.logger.info('report is ' + repr(subreports))
+        #sub case pass count
+
+        passnum = len(subreports)
+
+        for index, subreport in enumerate(subreports):
+            self.logger.logger.info('result is ' + repr(subreport.getresult()))
+            if subreport.getresult():
+                self.logger.logger.info('Case '+ str(index + 1) + ": " + subreport.getdesc() + " Pass")
+
         if casenum == passnum:
-            self.logger.logger.info('All the ' + str(casenum) +  " Cases Passed.")
+            self.logger.logger.info('All the ' + str(casenum) + " Cases Passed.")
+            self.casereport.setresult(True)
         else:
+            for i in range(passnum, casenum):
+                sipcmd = self.cmdenv.getsippcmds()[i]
+                self.logger.logger.info('Case '+ str(i) + ": " + sipcmd['desc'] + " Failed")
+
             self.logger.logger.error("Totally " + str(casenum) + ', Passed: ' + str(passnum))
+            self.casereport.setresult(False)
 
-        self.printReport()
+        self.endtime = datetime.datetime.now()
+        elapsedsec = (self.endtime - self.starttime).total_seconds()
+        self.casereport.setruntime(elapsedsec)
+        self.logger.logger.info('elapsed time is ' + repr(self.casereport.getruntime()))
+        desc = self.cmdenv.getCasename()
+        self.casereport.setdesc(desc)
 
+    def getreport(self):
+        return self.casereport
 
     def run(self):
         """
@@ -313,6 +314,14 @@ class TmtcUt(object):
         4. run nc
         :return:
         """
+
+        #sipptread is used to check sipp case pass rate
+        manager = Manager()
+        #sharedreport is used to shared between processes
+        #main process and sip thread
+        sharedreport = manager.list()
+        self.casereport.setsubreports(sharedreport)
+
         #NOTE: etask will block so should use multiprocessing instead!
         #run logcat thread
         logcatprocess = Process(target=self.logcatthread)
@@ -326,7 +335,7 @@ class TmtcUt(object):
 
 
         # run SIPp xml series
-        sippprocess = Process(target=self.sippthread)
+        sippprocess = Process(target=self.sippthread, args=(sharedreport, ))
         sippprocess.daemon = True
         sippprocess.start()
 
@@ -348,10 +357,13 @@ class TmtcUt(object):
         #get log
         self.getLog()
 
+        self.checkResult()
+
+
         #analyze logs
 
 if __name__ == '__main__':
-    tmtc = TmtcUt(confdir="cases/mt/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
     #TODO: report collect and html?

@@ -38,3 +38,5 @@
 7. case gen
 7.1 pause to emulate UE retransmit
 7.2 just resend in sipp xml
+8. nc cmd, exit code is not correct
+adbhelper.py - <waiter> - 146 - <echo -n c-reg | busybox nc 127.0.0.1 21904; echo -n $?> exit code is c-reg0
