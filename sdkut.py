@@ -4,7 +4,7 @@ import os
 from tmtc_ut import *
 from time import gmtime, strftime
 from lib.report import *
-
+from lib.htmlgenerator import *
 
 
 class Sdkut(object):
@@ -43,8 +43,13 @@ class Sdkut(object):
             fjson.append(report.todict())
         #https://www.w3cschool.cn/tryrun/showhtml/tryhtml_table_span
 
-        with open('./fjson', 'w+') as f:
+        with open('./report.json', 'w+') as f:
             f.write(json.dumps(fjson, indent=4))
+
+        hg = htmlgenerator(data=fjson)
+        hg.addstyle()
+        hg.genReportTable()
+        hg.dump()
 
 if __name__ == '__main__':
     sdk = Sdkut(casedir="./cases", bindir='./bin')

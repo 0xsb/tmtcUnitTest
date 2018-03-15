@@ -6,7 +6,7 @@ from lib.adbhelper import *
 from lib.logutils import *
 from lib.cmdhelper import *
 from lib.logConf import *
-import datetime
+from datetime import datetime
 import sys
 import os
 from multiprocessing import Process, Manager, Value
@@ -31,7 +31,7 @@ class TmtcUt(object):
         self.bindir = bindir
         self.utils = logutils()
 
-        self.starttime = datetime.datetime.now()
+        self.starttime = datetime.now()
         self.endtime = 0
 
         #whole case report
@@ -176,12 +176,6 @@ class TmtcUt(object):
 
         #multiprocess , ue need time to start
         time.sleep(self.ueconfig['startuptime'])
-        #initialize report default value
-        for index, sippcmd in enumerate(sippcmds):
-            cmd = sippcmd['cmd']
-            timeout = sippcmd['timeout']
-            desc = sippcmd['desc']
-
 
         #run the cmd
         for index, sippcmd in enumerate(sippcmds):
@@ -209,6 +203,15 @@ class TmtcUt(object):
                 evalue = sys.exc_info()[1]
                 estr = str(etype) + ' ' + str(evalue)
                 self.logger.logger.info("Unexpected error: " + estr)
+                #if exception comes here
+                if index <= len(sippcmd):
+                    onereport = subreport()
+                    onereport.setresult(False)
+                    onereport.setcmd(cmd)
+                    onereport.settimeout(timeout)
+                    onereport.setdesc(desc)
+                    sharedreport.append(onereport)
+
                 self.checkResult()
                 raise utException('case ' + str(index+1) + ' failed\n error is ' + estr)
 
@@ -296,7 +299,7 @@ class TmtcUt(object):
             self.logger.logger.error("Totally " + str(casenum) + ', Passed: ' + str(passnum))
             self.casereport.setresult(False)
 
-        self.endtime = datetime.datetime.now()
+        self.endtime = datetime.now()
         elapsedsec = (self.endtime - self.starttime).total_seconds()
         self.casereport.setruntime(elapsedsec)
         self.logger.logger.info('elapsed time is ' + repr(self.casereport.getruntime()))

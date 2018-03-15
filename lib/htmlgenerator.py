@@ -79,9 +79,11 @@ class htmlgenerator():
                 trinuse.add(subresulttd)
                 tab.add(trinuse)
 
+            #in case no subreports
+            if len(data["subreports"]) == 0:
+                tab.add(firsttr)
+
         self.doc.add(tab)
-
-
 
 
     def genCategoryTable(self):
@@ -93,61 +95,51 @@ class htmlgenerator():
 
     def dump(self):
         print self.doc
+        with open('./report.html', 'w+') as f:
+            f.write(str(self.doc))
 
 if __name__ == '__main__':
 
 
     reportjson = [
-        {
-            "desc": "MT call", 
-            "result": True, 
-            "runtime": 16.837204, 
-            "subreports": [
-                {
-                    "cmd": "MT_cmd1",
-                    "desc": "Register", 
-                    "result": True, 
-                    "timeout": 10
-                }, 
-                {
-                    "cmd": "MT_cmd2",
-                    "desc": "Subscribe/Notify", 
-                    "result": True, 
-                    "timeout": 10
-                }, 
-                {
-                    "cmd": "MT_cmd3",
-                    "desc": "MT call", 
-                    "result": True, 
-                    "timeout": 10
-                }
-            ]
-        }, 
-        {
-            "desc": "RegSub", 
-            "result": False,
-            "runtime": 11.411985, 
-            "subreports": [
-                {
-                    "cmd": "cmd4",
-                    "desc": "Register", 
-                    "result": True, 
-                    "timeout": 10
-                }, 
-                {
-                    "cmd": "cmd5",
-                    "desc": "Subscribe/Notify", 
-                    "result": False,
-                    "timeout": 10
-                }
-            ]
-        }
-    ]
+            {
+                "category": "TMTC",
+                "subreports": [],
+                "runtime": 17.844057,
+                "result": False,
+                "desc": "MT call"
+            },
+            {
+                "category": "TMTC",
+                "subreports": [
+                    {
+                        "cmd": "cd /data/data/ut/RegSub_2018_03_15_15_06_08&& sipp -sf reg.xml  -p 5060 -t u1 -m 1 -trace_err  -trace_msg -message_file reg.msg  -trace_shortmsg -shortmessage_file regshort.msg ",
+                        "result": True,
+                        "timeout": 10,
+                        "desc": "Register"
+                    },
+                    {
+                        "cmd": "cd /data/data/ut/RegSub_2018_03_15_15_06_08&& sipp -sf subs_notify.xml  -p 5060 -t u1 -m 1 -trace_err  -trace_msg -message_file subs_notify.msg  -trace_shortmsg -shortmessage_file subs_notifyshort.msg ",
+                        "result": True,
+                        "timeout": 10,
+                        "desc": "Subscribe/Notify"
+                    }
+                ],
+                "runtime": 11.792572,
+                "result": True,
+                "desc": "RegSub"
+            }
+        ]
 
     reportlist = genTestReport()
-
+    """
     # construct test data...
     hg = htmlgenerator(data=reportlist)
+    hg.addstyle()
+    hg.genReportTable()
+    hg.dump()
+    """
+    hg = htmlgenerator(data=reportjson)
     hg.addstyle()
     hg.genReportTable()
     hg.dump()
