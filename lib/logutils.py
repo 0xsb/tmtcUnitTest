@@ -7,6 +7,8 @@ import errno
 import hashlib
 import sys
 from datetime import datetime
+import string
+import random
 
 
 # 1. utils to handle android logs like main.log, radio.log, kernel.log
@@ -147,6 +149,15 @@ class logutils():
         else:
             return None
 
+    def asciistr_generator(self, size=6, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
+        #https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits-in-python
+        return ''.join(random.choice(chars) for _ in range(size))
+
+    def int_generator(self, start, end):
+        if end >= start:
+            return random.randint(start,end)
+        else:
+            return random.randint(end, start)
 
 if __name__ == "__main__":
     lutils = logutils()
@@ -159,3 +170,8 @@ if __name__ == "__main__":
     endstr = "09-01 17:08:10.120"
     end = lutils.converttime(endstr)
     print lutils.md5sum("./logutils.py")
+
+    print lutils.ascii_generator(size=3, chars="zhihuaye")
+    print lutils.int_generator(0,9)
+    print lutils.int_generator(9,0)
+

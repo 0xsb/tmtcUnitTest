@@ -36,10 +36,15 @@ class Sdkut(object):
                 self.reports.append(onetmtc.getreport())
 
     def dumpreport(self):
+        fjson = list()
         for index, report in enumerate(self.reports):
-            self.logger.logger.info('Case ' + report.getdesc() + " , run " + repr(report.getruntime()) + " s, Passed" if report.getresult() else "Failed")
+            resultstr = "Passed" if report.getresult() else "Failed"
+            self.logger.logger.info('Case ' + report.getdesc() + " , run " + repr(report.getruntime()) + " s," + resultstr)
+            fjson.append(report.todict())
         #https://www.w3cschool.cn/tryrun/showhtml/tryhtml_table_span
-        #TODO: dump report data to json
+
+        with open('./fjson', 'w+') as f:
+            f.write(json.dumps(fjson, indent=4))
 
 if __name__ == '__main__':
     sdk = Sdkut(casedir="./cases", bindir='./bin')
