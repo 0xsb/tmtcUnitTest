@@ -71,6 +71,9 @@ class cmdhelper:
     def getCasename(self):
         return self.config['description']['casename']
 
+    def getCategory(self):
+        return self.config['description']['category']
+
     def getConfDelta(self):
         """
         provision.ini delta value

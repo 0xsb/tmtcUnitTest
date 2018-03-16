@@ -260,7 +260,7 @@ class TmtcUt(object):
             curtimeout = curtimeout + timeout
 
 
-        logcatdmc = 'adb shell logcat -b main >' + self.execdir + '/main_' + self.cmdenv.gettimestamp() + '.log'
+        logcatdmc = 'adb shell logcat -s CPVoiceAgent:* >' + self.execdir + '/main_' + self.cmdenv.gettimestamp() + '.log'
 
         try:
             self.logger.logger.info('NOTE: start to run '+ logcatdmc + ' with timeout ' + str(curtimeout))
@@ -305,6 +305,7 @@ class TmtcUt(object):
         self.logger.logger.info('elapsed time is ' + repr(self.casereport.getruntime()))
         desc = self.cmdenv.getCasename()
         self.casereport.setdesc(desc)
+        self.casereport.setcategroy(self.cmdenv.getCategory())
 
     def getreport(self):
         return self.casereport
@@ -327,9 +328,11 @@ class TmtcUt(object):
 
         #NOTE: etask will block so should use multiprocessing instead!
         #run logcat thread
-        logcatprocess = Process(target=self.logcatthread)
-        logcatprocess.daemon = True
-        logcatprocess.start()
+        # AT thread will not be stopped, so AT cmd is not correct anyway.
+
+        #logcatprocess = Process(target=self.logcatthread)
+        #logcatprocess.daemon = True
+        #logcatprocess.start()
 
         # run tmtclient
         tmtcprocess = Process(target=self.tmtclientthread)
@@ -354,8 +357,8 @@ class TmtcUt(object):
         self.killprocess(pname=self.ueconfig['binary'])
         tmtcprocess.join()
 
-        self.killprocess(pname="logcat")
-        logcatprocess.join()
+        #self.killprocess(pname="logcat")
+        #logcatprocess.join()
 
         #get log
         self.getLog()
