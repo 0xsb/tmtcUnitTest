@@ -146,9 +146,13 @@ class cmdhelper:
                 if xml:
                     sippcmd = self.buildsipp(xml, timeout,desc, opts=opts)
                     self.sippcmds.append(sippcmd)
-                if tmtccmd:
-                    nccmd = self.buildnc(tmtccmd)
-                    self.nccmds.append(nccmd)
+
+                    if tmtccmd:
+                        nccmd = self.buildnc(tmtccmd)
+                        self.nccmds.append(nccmd)
+                    else:
+                        #just keep nccmd the same number as sipcmd
+                        self.nccmds.append(None)
 
             except:
                 #most likely KeyError

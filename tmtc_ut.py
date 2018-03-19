@@ -194,9 +194,11 @@ class TmtcUt(object):
             self.logger.logger.info("Unexpected error: " + estr)
         #add one more cmd to exit zsh
 
-    def sippthread(self, sharedreport):
+    def sippthread(self, sharedreport, sipprunning):
         """
-        sipp xml thread
+
+        :param sharedreport:
+        :param sipprunning:
         :return:
         """
         sippcmds = self.cmdenv.getsippcmds()
@@ -212,6 +214,7 @@ class TmtcUt(object):
             try:
                 self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
                 sipptask = eadbshell(cmd=cmd, timeout=timeout)
+                sipprunning[index] = True
                 sipptask.run()
                 #NOTE: if reach here, case PASS.
                 # CAUTION: https://stackoverflow.com/questions/38703907/modify-a-list-in-multiprocessing-pools-manager-dict
@@ -248,7 +251,7 @@ class TmtcUt(object):
         #self.checkResult()
         #self.termtmtc()
 
-    def ncthread(self):
+    def ncthread(self, sipprunning):
         """
         netcat thread
         :return:
@@ -259,25 +262,22 @@ class TmtcUt(object):
         sippcmds = self.cmdenv.getsippcmds()
         time.sleep(self.ueconfig['startuptime'])
         for index, nccmd in enumerate(nccmds):
+            #there may be none in nccmds
             cmd = nccmd['cmd']
             timeout = nccmd['timeout']
-            try:
-
-                #nccmd need to exec after previous sipp is running
-                if index > 0:
-                    waitsipptime = sippcmds[index-1]['timeout']
-                    waitsippcmd = sippcmds[index-1]['cmd']
-                    self.logger.logger.info('wait sipp ' + waitsippcmd + ' to exec ' + str(waitsipptime))
-                    time.sleep(waitsipptime)
-
-                self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
-                nctask = eadbshell(cmd=cmd, timeout=timeout)
-                nctask.run()
-            except:
-                etype = sys.exc_info()[0]
-                evalue = sys.exc_info()[1]
-                estr = str(etype) + ' ' + str(evalue)
-                self.logger.logger.info("Unexpected error: " + estr)
+            while not sipprunning[index]:
+                time.sleep(0.5)
+                self.logger.logger.info("wait 0.5s for " + sippcmds[index]['cmd'] + " to start")
+            if cmd:
+                try:
+                    self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
+                    nctask = eadbshell(cmd=cmd, timeout=timeout)
+                    nctask.run()
+                except:
+                    etype = sys.exc_info()[0]
+                    evalue = sys.exc_info()[1]
+                    estr = str(etype) + ' ' + str(evalue)
+                    self.logger.logger.info("Unexpected error: " + estr)
 
     # start a thread to collect main log
     # main log can be used to collect media cmd,
@@ -355,6 +355,11 @@ class TmtcUt(object):
         sharedreport = manager.list()
         self.casereport.setsubreports(sharedreport)
 
+        #sip thread and nc thread should be synced
+        sipprunning = manager.list()
+        for _ in range(len(self.cmdenv.getsippcmds())):
+            sipprunning.append(False)
+
         #NOTE: etask will block so should use multiprocessing instead!
         #run tcpdump thread
         # AT thread will not be stopped, so AT cmd is not correct anyway.
@@ -370,12 +375,12 @@ class TmtcUt(object):
 
 
         # run SIPp xml series
-        sippprocess = Process(target=self.sippthread, args=(sharedreport, ))
+        sippprocess = Process(target=self.sippthread, args=(sharedreport, sipprunning))
         sippprocess.daemon = True
         sippprocess.start()
 
         # run nc
-        ncprocess = Process(target=self.ncthread)
+        ncprocess = Process(target=self.ncthread, args=(sipprunning,))
         ncprocess.daemon = True
         ncprocess.start()
 
