@@ -31,8 +31,11 @@
     add config options in config.json
 3. case category: reg, sip, sdp
 3.1 tag, db support
-4. log check, adb logcat -b main 
-4.1 Tmtc_MtcCbSessCallIn check
+3.2 case reorg
+4. log check, 
+4.0 [wrong] adb logcat -b main, log may be lost and AT thread is not restarting 
+4.1 capture the tcpdump log, log collecting and dir
+4.55 Tmtc_MtcCbSessCallIn check
 5. sip/sdp parse
 6. report gen
 7. case gen

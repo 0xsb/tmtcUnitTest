@@ -11,6 +11,8 @@ import sys
 import os
 from multiprocessing import Process, Manager, Value
 from lib.report import *
+import shutil
+
 
 # 1. env setup
 # 2. process goes
@@ -111,6 +113,31 @@ class TmtcUt(object):
         outputdir = self.outdir + '/' + casestamp
         self.utils.mkdirp(outputdir)
         self.adb.pull(destdir=self.execdir,localdir=outputdir)
+        # reorg the dir structures
+        # 1. cases : including all xmls, cmd list, provision.ini
+        # 2. ue log : mtc , mme log, tcpdump log, profiles dir
+        # 3. sipp log:  -trace_err will generate *_errors.log, -trace_calldebug will generate *_calldebug.log
+        casedir = outputdir + '/' + "cases"
+        uelogdir = outputdir + '/' + "uelog"
+        sipplogdir = outputdir + '/' + "sipplog"
+        self.utils.mkdirp(casedir)
+        self.utils.mkdirp(uelogdir)
+        self.utils.mkdirp(sipplogdir)
+
+        #TODO: write sippcmd and nccmds to one file
+        cmdlist = casedir + '/cmdlist'
+
+        self.utils.mv(outputdir + "/provision.ini", casedir)
+        self.utils.mv(outputdir + "/*.xml", casedir)
+
+        self.utils.mv(outputdir + "/mtc*.log", uelogdir)
+        self.utils.mv(outputdir + "/mme*.log", uelogdir)
+        self.utils.mv(outputdir + "/profiles", uelogdir)
+        self.utils.mv(outputdir + "/*.cap", uelogdir)
+
+        self.utils.mv(outputdir + "/*.msg", sipplogdir)
+        self.utils.mv(outputdir + "/*_errors.log", sipplogdir)
+        self.utils.mv(outputdir + "/*_calldebug.log", sipplogdir)
 
     def killprocess(self, pname):
         #stop tmtclient
@@ -226,6 +253,8 @@ class TmtcUt(object):
         netcat thread
         :return:
         """
+        #FIXME: need to add sync with sippthread!
+
         nccmds = self.cmdenv.getnccmds()
         sippcmds = self.cmdenv.getsippcmds()
         time.sleep(self.ueconfig['startuptime'])
@@ -252,7 +281,7 @@ class TmtcUt(object):
 
     # start a thread to collect main log
     # main log can be used to collect media cmd,
-    def logcatthread(self):
+    def tcpdumpthread(self):
         timeouts = self.cmdenv.gettimeouts()
         #logcat timeout is the sum of all timeout plus
         curtimeout = self.ueconfig['startuptime'] + 2
@@ -260,11 +289,11 @@ class TmtcUt(object):
             curtimeout = curtimeout + timeout
 
 
-        logcatdmc = 'adb shell logcat -s CPVoiceAgent:* >' + self.execdir + '/main_' + self.cmdenv.gettimestamp() + '.log'
+        tcpdumpcmd = 'adb shell tcpdump -i any -w ' + self.execdir + '/' + self.cmdenv.getCasename()  + '.cap'
 
         try:
-            self.logger.logger.info('NOTE: start to run '+ logcatdmc + ' with timeout ' + str(curtimeout))
-            tmtctask = etask(cmd=logcatdmc, timeout=curtimeout, retry=1)
+            self.logger.logger.info('NOTE: start to run '+ tcpdumpcmd + ' with timeout ' + str(curtimeout))
+            tmtctask = etask(cmd=tcpdumpcmd, timeout=curtimeout, retry=1)
             tmtctask.run()
         except:
             etype = sys.exc_info()[0]
@@ -327,12 +356,12 @@ class TmtcUt(object):
         self.casereport.setsubreports(sharedreport)
 
         #NOTE: etask will block so should use multiprocessing instead!
-        #run logcat thread
+        #run tcpdump thread
         # AT thread will not be stopped, so AT cmd is not correct anyway.
 
-        #logcatprocess = Process(target=self.logcatthread)
-        #logcatprocess.daemon = True
-        #logcatprocess.start()
+        tcpdumpprocess = Process(target=self.tcpdumpthread)
+        tcpdumpprocess.daemon = True
+        tcpdumpprocess.start()
 
         # run tmtclient
         tmtcprocess = Process(target=self.tmtclientthread)
@@ -357,14 +386,13 @@ class TmtcUt(object):
         self.killprocess(pname=self.ueconfig['binary'])
         tmtcprocess.join()
 
-        #self.killprocess(pname="logcat")
-        #logcatprocess.join()
+        self.killprocess(pname="tcpdump")
+        tcpdumpprocess.join()
 
         #get log
         self.getLog()
 
         self.checkResult()
-
 
         #analyze logs
 

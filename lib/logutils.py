@@ -9,7 +9,8 @@ import sys
 from datetime import datetime
 import string
 import random
-
+import glob
+import shutil
 
 # 1. utils to handle android logs like main.log, radio.log, kernel.log
 # 2. find pid by keyword
@@ -78,6 +79,14 @@ class logutils():
                 pass
             else:
                 raise
+
+    # mv wildcard src file/dir to dst
+    def mv(self, src, dst):
+        if os.path.isdir(dst):
+            for srcfile in glob.glob(src):
+                shutil.move(srcfile, dst)
+        else:
+            print 'not dir'
 
     def checkint(self, s):
         s = s.strip()
@@ -171,7 +180,8 @@ if __name__ == "__main__":
     end = lutils.converttime(endstr)
     print lutils.md5sum("./logutils.py")
 
-    print lutils.ascii_generator(size=3, chars="zhihuaye")
+    print lutils.asciistr_generator(size=3, chars="zhihuaye")
     print lutils.int_generator(0,9)
     print lutils.int_generator(9,0)
 
+    lutils.mv("mme.*log", 'test')

@@ -48,6 +48,7 @@ class Sdkut(object):
 
         hg = htmlgenerator(data=fjson)
         hg.addstyle()
+        hg.genSummary()
         hg.genReportTable()
         hg.dump()
 

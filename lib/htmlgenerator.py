@@ -33,6 +33,36 @@ class htmlgenerator():
     def genIndex(self):
         pass
 
+    def genSummary(self):
+        # gen summary
+        # Total Pass Fail
+        tab = table(border=1)
+        cap = caption(b("Summary"))
+        tab.add(cap)
+        theaders = ["Total", "Pass", "Failed"]
+        for theader in theaders:
+            tab.add(th(theader))
+        totalnum = len(self.data)
+        passnum = 0
+        failnum = 0
+        for data in self.data:
+            if data["result"] == True:
+                passnum += 1
+        failnum = totalnum - passnum
+        onetr = tr()
+        totaltd = td(totalnum)
+        passtd = td(passnum,style="background-color: green")
+        if failnum > 0:
+            failtd = td(failnum, style="background-color: red")
+        else:
+            failtd = td(failnum)
+
+        onetr.add(totaltd)
+        onetr.add(passtd)
+        onetr.add(failtd)
+        tab.add(onetr)
+        self.doc.add(tab)
+
     def genReportTable(self):
         """
         overall case report
@@ -89,6 +119,7 @@ class htmlgenerator():
     def genCategoryTable(self):
         """
         reg, call category table
+        subSection details
         :return:
         """
         pass
@@ -141,5 +172,6 @@ if __name__ == '__main__':
     """
     hg = htmlgenerator(data=reportjson)
     hg.addstyle()
+    hg.genSummary()
     hg.genReportTable()
     hg.dump()
