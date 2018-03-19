@@ -26,6 +26,7 @@ class utException(Exception):
 
 class TmtcUt(object):
     def __init__(self, outdir = './output', loglevel='DEBUG', confdir='', brickdir='',bindir=''):
+        #logConf is single instance
         self.logger = logConf(debuglevel=loglevel)
         self.outdir = outdir
         self.confdir = confdir
@@ -124,8 +125,18 @@ class TmtcUt(object):
         self.utils.mkdirp(uelogdir)
         self.utils.mkdirp(sipplogdir)
 
-        #TODO: write sippcmd and nccmds to one file
+        #TODO: add sipp/nc runtime logs
         cmdlist = casedir + '/cmdlist'
+        nccmds = self.cmdenv.getnccmds()
+        sippcmds = self.cmdenv.getsippcmds()
+        with open(cmdlist, 'w+') as cfile:
+            for index, cmd in enumerate(sippcmds):
+                nccmd = nccmds[index]
+                sippcmd = sippcmds[index]
+                cfile.write("Step " + str(index + 1) + '\n')
+                cfile.write("sipp cmd : " + sippcmd['cmd'] + '\n')
+                if (nccmd):
+                    cfile.write("nc cmd: " + nccmd['cmd'] + '\n')
 
         self.utils.mv(outputdir + "/provision.ini", casedir)
         self.utils.mv(outputdir + "/*.xml", casedir)
@@ -288,8 +299,8 @@ class TmtcUt(object):
         for index, timeout in enumerate(timeouts):
             curtimeout = curtimeout + timeout
 
-
-        tcpdumpcmd = 'adb shell tcpdump -i any -w ' + self.execdir + '/' + self.cmdenv.getCasename()  + '.cap'
+        capname = re.sub(r'[\s+]', '_', self.cmdenv.getCasename())
+        tcpdumpcmd = 'adb shell tcpdump -i any -w ' + self.execdir + '/' + capname + '.cap'
 
         try:
             self.logger.logger.info('NOTE: start to run '+ tcpdumpcmd + ' with timeout ' + str(curtimeout))

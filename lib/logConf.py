@@ -8,7 +8,7 @@ import sys
 from time import gmtime, strftime
 
 import logging.config
-
+import logutils
 
 #http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
 
@@ -21,8 +21,9 @@ class Singleton(type):
 
 class logConf(object):
     __metaclass__ = Singleton
-    def __init__(self, loggername='logparser', logpath='./test.log', debuglevel='DEBUG'):
+    def __init__(self, loggername='logparser', logpath="./test.log", debuglevel='DEBUG'):
         self.timestamp = strftime("%Y_%m_%d_%H_%M_%S", gmtime())
+        self.utils = logutils.logutils()
         self.logpath = './' + str(self.timestamp) + '.log'
         logFormatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(filename)s - <%(funcName)s> - %(lineno)d - %(message)s')
         rootLogger = logging.getLogger(loggername)

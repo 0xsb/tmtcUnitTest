@@ -9,7 +9,6 @@ from lib.htmlgenerator import *
 
 class Sdkut(object):
     def __init__(self, casedir='', bindir=''):
-        self.logger = logConf()
         self.casedir =  casedir
         self.brickdir = os.path.realpath(casedir) + '/bricks'
         self.bindir = bindir
@@ -17,7 +16,7 @@ class Sdkut(object):
         self.timestamp = strftime("%Y_%m_%d_%H_%M_%S", gmtime())
         self.outdir = './output/' + self.timestamp
         self.reports = list()
-
+        self.logger = logConf()
 
     def run(self):
         for cdir in os.listdir(self.casedir):
