@@ -128,8 +128,21 @@ class eadbshell:
             #non-blocking mode
             pairs = self.poller.poll(timeout=0)
             if len(pairs) != 0:
-                self.logger.logger.info(self.cmd + " recv events {}".format(pairs))
+                #self.logger.logger.info(self.cmd + " recv events {}".format(pairs))
                 for fd, status in pairs:
+                    #add description about status
+                    if status == select.POLLIN:
+                        self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "eadbshell recv POLLIN")
+                    elif status == select.POLLPRI:
+                        self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "eadbshell recv POLLPRI")
+                    elif status == select.POLLOUT:
+                        self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "eadbshell recv POLLOUT")
+                    elif status == select.POLLERR:
+                        self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "eadbshell recv POLLERR")
+                    elif status == select.POLLHUP:
+                        self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "eadbshell recv POLLHUP")
+                    else:
+                        self.logger.logger.info(self.cmd + " fd "+ repr(fd) + 'eadbshell recv ' + repr(status))
                     if status & select.EPOLLHUP:
                         #adb shell return code check
                         #adb shell will return 0 once cmd is execed except receive signal interrupt

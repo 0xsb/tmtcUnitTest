@@ -76,8 +76,23 @@ class etask:
         :return:
         """
         pairs = self.poller.poll()
-        self.logger.logger.info(self.cmd + " recv hangup {}".format(pairs))
+        #self.logger.logger.info(self.cmd + " recv hangup {}".format(pairs))
+
         for fd, status in pairs:
+            #add description about status
+            if status == select.POLLIN:
+                self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "etask recv POLLIN")
+            elif status == select.POLLPRI:
+                self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "etask recv POLLPRI")
+            elif status == select.POLLOUT:
+                self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "etask recv POLLOUT")
+            elif status == select.POLLERR:
+                self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "etask recv POLLERR")
+            elif status == select.POLLHUP:
+                self.logger.logger.info(self.cmd + " fd "+ repr(fd) + "etask recv POLLHUP")
+            else:
+                self.logger.logger.info(self.cmd + " fd "+ repr(fd) + 'etask recv ' + repr(status))
+
             if self.fds2procs:
                 curproc = self.fds2procs[fd]
                 #returncode needed to be set by communicate

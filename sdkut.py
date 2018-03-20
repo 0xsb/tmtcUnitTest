@@ -42,10 +42,10 @@ class Sdkut(object):
             fjson.append(report.todict())
         #https://www.w3cschool.cn/tryrun/showhtml/tryhtml_table_span
 
-        with open('./report.json', 'w+') as f:
+        with open(self.outdir + '/report.json', 'w+') as f:
             f.write(json.dumps(fjson, indent=4))
 
-        hg = htmlgenerator(data=fjson)
+        hg = htmlgenerator(data=fjson, outdir=self.outdir)
         hg.addstyle()
         hg.genSummary()
         hg.genReportTable()

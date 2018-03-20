@@ -31,9 +31,9 @@
   </send>
   
 
-  <nop display=">>>>> Sending NOTIFY after 2000ms <<<<" crlf="true"/>
+  <nop display=">>>>> Sending NOTIFY after 500ms <<<<" crlf="true"/>
 
-  <pause milliseconds="2000"/>
+  <pause milliseconds="500"/>
 
  <send retrans="2000">
     <![CDATA[

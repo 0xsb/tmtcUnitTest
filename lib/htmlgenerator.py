@@ -18,7 +18,9 @@ from report import *
 
 
 class htmlgenerator():
-    def __init__(self,  data=[]):
+    def __init__(self,  data=[], outdir=""):
+        self.outdir = outdir
+        self.file = outdir + '/report.html'
         self.data = data
         self.doc = dominate.document(title="tmtc report", doctype="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN http://www.w3.org/TR/html4/loose.dtd\">")
         metastring=meta(http_equiv="Content-Type", content="text/html; charset=utf-8")
@@ -126,7 +128,7 @@ class htmlgenerator():
 
     def dump(self):
         print self.doc
-        with open('./report.html', 'w+') as f:
+        with open(self.file, 'w+') as f:
             f.write(str(self.doc))
 
 if __name__ == '__main__':

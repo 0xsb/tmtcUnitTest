@@ -70,11 +70,15 @@ class TmtcUt(object):
             if newmd5val != oldmd5val:
                 with open(md5file, 'w+') as mfile:
                     mfile.write(newmd5val)
+                    return True
         else:
             #not exist, write md5
             md5val = self.utils.md5sum(file)
             with open(md5file, 'w+') as mfile:
                 mfile.write(md5val)
+            return True
+
+        return False
 
     def envsetup(self):
         scenario = self.cmdenv.getDesc()
@@ -88,6 +92,7 @@ class TmtcUt(object):
 
         if new:
             self.adb.push(binary, "/system/bin/")
+
         for index, lib in enumerate(ueconfig['lib']):
             lib = bindir + '/' + lib
             new = self.checkFile(lib)
@@ -383,7 +388,6 @@ class TmtcUt(object):
         tmtcprocess = Process(target=self.tmtclientthread)
         tmtcprocess.daemon = True
         tmtcprocess.start()
-
 
         # run SIPp xml series
         sippprocess = Process(target=self.sippthread, args=(sharedreport, sipprunning))
