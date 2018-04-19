@@ -24,7 +24,9 @@
 1.7 [823352](http://bugzilla.spreadtrum.com/bugzilla/show_bug.cgi?id=823352) tcp data is fragmented , parser logic should be changed.
             183 Session Progress
             recv tcp data(len:1096) from [10.77.25.36:7777].  recv tcp data(len:169) from [10.77.25.36:7777].
------------------------------------------------------
+
+tuple check
+-----------
 2. env setup
 2.1 [x][prio_1], add filecmp logic to check binary config
 2.2 [][prio_4], add delta logic to change provision.ini

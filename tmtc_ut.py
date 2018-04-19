@@ -326,21 +326,20 @@ class TmtcUt(object):
         #self.logger.logger.info('report is ' + repr(subreports))
         #sub case pass count
 
-        passnum = len(subreports)
+        passnum = 0
 
         for index, subreport in enumerate(subreports):
-            self.logger.logger.info('result is ' + repr(subreport.getresult()))
+            #self.logger.logger.info('result is ' + repr(subreport.getresult()))
+            phrase = " Failed"
             if subreport.getresult():
-                self.logger.logger.info('Case '+ str(index + 1) + ": " + subreport.getdesc() + " Pass")
+                passnum += 1
+                phrase = " Pass"
+            self.logger.logger.info('Case '+ str(index + 1) + ": " + subreport.getdesc() + phrase)
 
         if casenum == passnum:
             self.logger.logger.info('All the ' + str(casenum) + " Cases Passed.")
             self.casereport.setresult(True)
         else:
-            for i in range(passnum, casenum):
-                sipcmd = self.cmdenv.getsippcmds()[i]
-                self.logger.logger.info('Case '+ str(i) + ": " + sipcmd['desc'] + " Failed")
-
             self.logger.logger.error("Totally " + str(casenum) + ', Passed: ' + str(passnum))
             self.casereport.setresult(False)
 
@@ -417,7 +416,7 @@ class TmtcUt(object):
         #analyze logs
 
 if __name__ == '__main__':
-    tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/mt_806881/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
     #TODO: report collect and html?

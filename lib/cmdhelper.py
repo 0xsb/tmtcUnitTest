@@ -26,7 +26,7 @@ class CmdException(Exception):
 class cmdObj(dict):
     def __init__(self, *arg, **kw):
         self['cmd'] = ''
-        self['timeout'] = None
+        self['timeout'] = 1
         super(cmdObj, self).__init__(*arg, **kw)
 
 
@@ -152,7 +152,10 @@ class cmdhelper:
                         self.nccmds.append(nccmd)
                     else:
                         #just keep nccmd the same number as sipcmd
-                        self.nccmds.append(None)
+                        dummynccmd = cmdObj()
+                        dummynccmd['cmd'] = "dummycmd"
+
+                        self.nccmds.append(dummynccmd)
 
             except:
                 #most likely KeyError
