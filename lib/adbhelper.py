@@ -66,7 +66,8 @@ class adbhelper:
 
 #https://imsardine.wordpress.com/2012/06/05/android-adb-shell-exit-status/
 def adb_shell(shell_cmds):
-    shell_cmds += '; echo $?'
+    #in case , so start a new line
+    shell_cmds += '; echo -e \'\n\'$?'
     #NOTE: double quote is a MUST?
     cmds = ['adb', 'shell', shell_cmds]
     stdout = subprocess.Popen(cmds, stdout=subprocess.PIPE).communicate()[0].rstrip()
@@ -91,7 +92,7 @@ just write a class to copy etask, but add special handling to check shell exit
 class eadbshell:
     def __init__(self, cmd='', timeout=1):
         #manually print exit code, remove \n
-        self.cmd = cmd + '; echo -n $?'
+        self.cmd = cmd + '; echo -e -n \'\n\'$?'
         self.timeout = int(timeout)
         self.logger = logConf()
         self.poller = select.epoll()

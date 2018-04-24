@@ -1,11 +1,10 @@
 {
   "description": {
-      "scenario" : "ts 34.229 C.11a MT call for WLAN",
-      "bugid" : "806881",
+      "scenario" : "MO Qos sendrecv",
+      "bugid" : "dummy",
       "commitid" : "abcdefg",
-      "category" : "Call precondition",
-      "casename" : "MT call for WLAN C.11a TS_34.229",
-      "comments" : "qos sendrecv in INIVTE"
+      "category" : "Call",
+      "casename" : "precondition MO call "
   },
 
   "ue": {
@@ -38,16 +37,16 @@
     },
 
     {
-      "desc": "MT call",
-      "xml": "mt_806881.xml",
+      "desc": "MO call",
+      "xml": "mo_precon_sendrecv.xml",
       "timeout": 6,
-      "tmtccmd":  "",
+      "tmtccmd":  "t-call 123",
       "opts": " 127.0.0.1:5065"
     },
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 2,
+      "timeout": 4,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

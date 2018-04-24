@@ -153,7 +153,7 @@ class cmdhelper:
                     else:
                         #just keep nccmd the same number as sipcmd
                         dummynccmd = cmdObj()
-                        dummynccmd['cmd'] = "dummycmd"
+                        dummynccmd['cmd'] = DUMMY_CMD
 
                         self.nccmds.append(dummynccmd)
 
@@ -162,7 +162,7 @@ class cmdhelper:
                 etype = sys.exc_info()[0]
                 evalue = sys.exc_info()[1]
                 estr = str(etype) +' '+str(evalue)
-                self.logger.logger.error("Unexpected error:"+ estr)
+                self.logger.logger.error("Unexpected error:" + estr)
                 raise(CmdException(estr))
 
 

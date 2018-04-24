@@ -281,10 +281,16 @@ class TmtcUt(object):
             #there may be none in nccmds
             cmd = nccmd['cmd']
             timeout = nccmd['timeout']
+            wtime = 0
             while not sipprunning[index]:
+                wtime += 0.5
                 time.sleep(0.5)
                 self.logger.logger.info("wait 0.5s for " + sippcmds[index]['cmd'] + " to start")
-            if cmd:
+                if wtime > 10:
+                    self.logger.logger.error("wait for 10s " + sippcmds[index]['cmd'])
+                    break
+
+            if cmd != DUMMY_CMD:
                 try:
                     self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
                     nctask = eadbshell(cmd=cmd, timeout=timeout)
