@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "ts 34.229 C.11a MT call for WLAN",
-      "bugid" : "806881",
-      "commitid" : "abcdefg",
+      "scenario" : "3G MT call in VDF",
+      "bugid" : "695295",
+      "commitid" : "376369",
       "category" : "Call precondition",
-      "casename" : "MT call for WLAN C.11a TS_34.229",
-      "comments" : "qos sendrecv in INIVTE"
+      "casename" : "3G MT call in VDF",
+      "comments" : "qos desire none in INIVTE"
   },
 
   "ue": {
@@ -13,7 +13,7 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
-      "startuptime": 2,
+      "startuptime": 3,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
@@ -39,16 +39,9 @@
 
     {
       "desc": "MT call",
-      "xml": "mt_806881.xml",
+      "xml": "mt_precond_desire_none.xml",
       "timeout": 6,
       "tmtccmd":  "",
-      "opts": " 127.0.0.1:5065"
-    },
-    {
-      "desc": "UE bye",
-      "xml": "uebye.xml",
-      "timeout": 3,
-      "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }
   ]

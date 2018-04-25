@@ -1,0 +1,143 @@
+[GENERAL]
+  AUTO_IP = 1
+  LOCAL_IP = 10.211.55.6
+  LOG_LEVEL = 0xff
+
+[RCS_SIP]
+  AUTO_REG = 1
+  REG_PROXY = 1
+  SUBS_REG = 1
+  NO_DIGEST = 0
+  UDP_PORT = 5065
+  TCP_PORT = 5065
+  TPT_TYPE = 0
+  MTU = 9216
+  USER_NAME = +8616000000310
+  NICK_NAME = +8616000000310
+  AUTH_NAME = 1001@ims.mnc007.mcc460.3gppnetwork.org
+  AUTH_PASS = CmRcs!1
+  PROXY_IP = 127.0.0.1
+  PROXY_TCPPORT = 5060
+  PROXY_UDPPORT = 5060
+  PROXY_TLSPORT = 5060
+  PROXY_REALM = gd.ims.mnc007.mcc460.3gppnetwork.org
+  PRECONDITION = 0
+  SLEEP_ANSWER = 2
+  VIDEO_CALL = 1
+[RCS_MSRP]
+  TCP_PORT = 3000
+  TLS_PORT = 4001
+  MEDIA_TYPE = 0
+
+
+[RCS_IM]
+  CONF_URI = sip:1252000199@as99.gc.rcs1.chinamobile.com
+  MULTI_TEXT_URI = sip:msgas@as98.message.rcs1.chinamobile.com
+  DEFER_RET_URI = sip:Deferred@colibria.com
+
+[RCS_XDMC]
+  AUTH_NAME = tel:+8613522631111
+  AUTH_PASS = 1111
+  XCAP_HOST = 122.70.137.46
+  XCAP_PORT = 8080
+  XCAP_ROOT = /services
+  AG_PROXY_IP = 122.70.137.46
+  AG_PROXY_PORT = 8080
+  XCAP_USER_ID = tel:+8613522631111
+
+[RCS_PROFILE]
+  AUTH_NAME = tel:+8613522631111
+  AUTH_PASS = 1111
+  AUTH_TOKEN = XXXXXXXXXX
+  AUTH_TYPE = 2
+  SERV_ADDR = 221.179.192.78
+  SERV_PORT = 8182
+  SERV_ROOT = /services
+
+[RCS_QRCARD]
+  AUTH_NAME = tel:+8613522631111
+  AUTH_PASS = 1111
+  AUTH_TOKEN = XXXXXXXXXX
+  AUTH_TYPE = 2
+  SERV_ADDR = 221.179.192.78
+  SERV_PORT = 8080
+  SERV_ROOT = /services
+
+[RCS_TEST_IM]
+  CONTENT = page
+  PARTP_URI = sip:+8615657477570@zte.com.cn
+  PA_URI = sip:125200024018244177@pia.gd.ims.mnc007.mcc460.3gppnetwork.org
+  USE_CPIM = 1
+  SEND_FILE = f.txt
+  SEND_FILE_IMAGE = icon.jpg
+  SEND_FILE_AUDIO = audio.amr
+  SEND_FILE_VIDEO = video.mp4
+  SEND_FILE_VCARD = contact.vcf
+  ACPT_FILE = rcv_f.txt
+  SEND_IMG = i.txt
+  ACPT_IMG = i.txt
+  SESS_PARTP_COUNT = 2
+  SESS_PARTP_0 = sip:+8616000000332@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SESS_PARTP_1 = sip:+8616000000302@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SESS_PARTP_2 = sip:+8617820500038@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SESS_PARTP_ADD = sip:+8675588880082@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SESS_PARTP_RMV = sip:+8616000000332@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SESS_PARTP_EXT = sip:+8675588880082@huawei.com
+  SESS_MDY_SUBJECT = 12345
+  SESS_MDY_CHAIRMAN = sip:+8616000000332@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SESS_MDY_DISPNAME = phil
+  SPAM_FROM_URI = sip:+8616000000332@gd.ims.mnc007.mcc460.3gppnetwork.org
+  SPAM_TO_URI = sip:+8616000000310@gd.ims.mnc007.mcc460.3gppnetwork.org
+
+[RCS_TEST_PA]
+  PARTP_URI = 125200024018274865@as99.pa.rcs1.chinamobile.com
+  TCP_PORT = 8188
+  PA_SER_ADDR = 221.179.192.78
+  SEND_IMG = i.txt
+  ACPT_IMG = i.txt
+  USER_ID = sip:+8615100001199@gd.ims.mnc007.mcc460.3gppnetwork.org
+  AUTH_NAME = tel:+8615100001199
+  PA_ROOT = /interface/index.php
+  SESS_PARTP_COUNT = 3
+  SESS_RMV_COUNT = 2
+  SESS_PARTP_0 = 125200024018998939@as99.pa.rcs1.chinamobile.com
+  SESS_PARTP_1 = 125200024018998937@as99.pa.rcs1.chinamobile.com
+  SESS_PARTP_2 = 125200024007654321@as99.pa.rcs1.chinamobile.com
+  SESS_PARTP_ADD = 125200024018274865@as99.pa.rcs1.chinamobile.com
+  SESS_PARTP_ADD_1 = 125200024018998130@as99.pa.rcs1.chinamobile.com
+  SESS_RMV_0 = 125200024018998939@as99.pa.rcs1.chinamobile.com
+  SESS_RMV_1 = 125200024018998937@as99.pa.rcs1.chinamobile.com
+  SESS_RMV_2 = 125200024007654321@as99.pa.rcs1.chinamobile.com
+
+[RCS_TLS]
+  CLI_METHOD = 3
+  CLI_VERY_TYPE = 0
+  CLI_CERT_FILE = client.crt
+  CLI_KEY_FILE = client.key
+  CLI_KEY_PASS = 123456
+  SERV_METHOD = 3
+  SERV_VERY_TYPE = 0
+  SERV_CERT_FILE = server.crt
+  SERV_KEY_FILE = server.key
+  SERV_KEY_PASS = 123456
+[RCS_MS]
+  SERVER_IP = 220.181.12.100
+  SERVER_PORT = 143
+  USER_NAME = zhoubodexiaohao23@163.com
+  USER_PASS = 88498658
+
+[RCS_TEST_CONF]
+  CONF_URI = tel:*28  #
+  PARTP_URI = tel:+8616000000332
+  SESS_PARTP_COUNT = 2
+  SESS_PARTP_0 = tel:+8616000000333
+  SESS_PARTP_1 = tel:+8616000000332
+  SESS_PARTP_2 = tel:+8618691972618
+  SESS_PARTP_3 = tel:+8618915931862
+  SESS_PARTP_4 = tel:+8615657821663
+  SESS_PARTP_5 = tel:+8615057401949
+  SESS_PARTP_6 = tel:+8618908648785, 8617820500067, 8613776682807, 8616000000033, 8615365106705
+
+[RCS_TEST_GBA]
+  SERV_ADDR = 117.136.143.245
+  SERV_PORT = 8080

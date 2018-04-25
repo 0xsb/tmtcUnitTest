@@ -97,6 +97,9 @@ class cmdhelper:
                   "liblemon_ut.so"
         ]
 
+        ueconfig['preference'] = dict()
+        if 'preference' in self.config['ue']:
+            ueconfig['preference'] = self.config['ue']['preference']
 
         if 'tmtcport' in self.config['ue']:
             ueconfig['tmtcport'] = self.config['ue']['tmtcport']

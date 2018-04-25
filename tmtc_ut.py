@@ -6,6 +6,7 @@ from lib.adbhelper import *
 from lib.logutils import *
 from lib.cmdhelper import *
 from lib.logConf import *
+from lib.ueconfig import *
 from datetime import datetime
 import sys
 import os
@@ -99,13 +100,17 @@ class TmtcUt(object):
             if new:
                 self.adb.push(lib, "/system/lib/")
 
-        #UE config: provision.ini
-        #TODO: later may add delta provision.ini
         proini = bindir + '/' + ueconfig['config']
+        tmpini = proini + '.tmp'
+        shutil.copyfile(proini, tmpini)
+
+        changeUE(tmpini,pref=ueconfig['preference'])
         execdir = ueconfig['execdir']
         self.execdir = execdir
         self.adb.mkdirp(execdir)
-        self.adb.push(proini, execdir)
+        dstini = execdir + '/' + ueconfig['config']
+        self.adb.push(tmpini, dstini)
+        os.remove(tmpini)
 
         #sipp xml
         brickdir = os.path.realpath(self.brickdir)
@@ -422,7 +427,8 @@ class TmtcUt(object):
         #analyze logs
 
 if __name__ == '__main__':
-    tmtc = TmtcUt(confdir="cases/mt_806881/", brickdir="cases/bricks/",bindir="bin")
+    #tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/mt_precond_video_voice_answer/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
     #TODO: report collect and html?

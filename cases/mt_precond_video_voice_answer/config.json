@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "ts 34.229 C.11a MT call for WLAN",
-      "bugid" : "806881",
+      "scenario" : "MT call voice answer video call precond enabled",
+      "bugid" : "dummy",
       "commitid" : "abcdefg",
       "category" : "Call precondition",
-      "casename" : "MT call for WLAN C.11a TS_34.229",
-      "comments" : "qos sendrecv in INIVTE"
+      "casename" : "MT call voice answer video call precond enabled",
+      "comments" : "video call voice answer, precond enabled"
   },
 
   "ue": {
@@ -13,11 +13,15 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
-      "startuptime": 2,
+      "startuptime": 3,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
-      ]
+      ],
+
+      "preference": {
+        "VIDEO_CALL": 0
+      }
 
   },
 
@@ -38,8 +42,8 @@
     },
 
     {
-      "desc": "MT call",
-      "xml": "mt_806881.xml",
+      "desc": "MT call voice answer video call precond enabled.",
+      "xml": "mt_precond_voice_answer.xml",
       "timeout": 6,
       "tmtccmd":  "",
       "opts": " 127.0.0.1:5065"
