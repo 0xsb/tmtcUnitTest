@@ -198,7 +198,8 @@ class TmtcUt(object):
         timeouts = self.cmdenv.gettimeouts()
 
         #tmtclient timeout is the sum of all timeout plus
-        curtimeout = self.ueconfig['startuptime'] + 2
+        #curtimeout = self.ueconfig['startuptime']
+        curtimeout = 0
         for index, timeout in enumerate(timeouts):
             curtimeout = curtimeout + timeout
 
@@ -232,6 +233,7 @@ class TmtcUt(object):
             cmd = sippcmd['cmd']
             timeout = sippcmd['timeout']
             desc = sippcmd['desc']
+            substart = datetime.now()
             try:
                 self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
                 sipptask = eadbshell(cmd=cmd, timeout=timeout)
@@ -241,12 +243,16 @@ class TmtcUt(object):
                 # CAUTION: https://stackoverflow.com/questions/38703907/modify-a-list-in-multiprocessing-pools-manager-dict
                 # seems manager list becomes immutable
                 # will only append once and NEVER changed.
+
+                subend = datetime.now()
+                runtime = (subend - substart).total_seconds()
                 onereport = subreport()
 
                 onereport.setresult(True)
                 onereport.setcmd(cmd)
                 onereport.settimeout(timeout)
                 onereport.setdesc(desc)
+                onereport.setruntime(runtime)
                 sharedreport.append(onereport)
                 self.logger.logger.info('case ' + repr(index + 1) + ' result is ' + repr(onereport.getresult()))
             except:
@@ -255,12 +261,15 @@ class TmtcUt(object):
                 estr = str(etype) + ' ' + str(evalue)
                 self.logger.logger.info("Unexpected error: " + estr)
                 #if exception comes here
+                subend = datetime.now()
+                runtime = (subend - substart).total_seconds()
                 if index <= len(sippcmd):
                     onereport = subreport()
                     onereport.setresult(False)
                     onereport.setcmd(cmd)
                     onereport.settimeout(timeout)
                     onereport.setdesc(desc)
+                    onereport.setruntime(runtime)
                     sharedreport.append(onereport)
 
                 self.checkResult()
@@ -311,7 +320,8 @@ class TmtcUt(object):
     def tcpdumpthread(self):
         timeouts = self.cmdenv.gettimeouts()
         #logcat timeout is the sum of all timeout plus
-        curtimeout = self.ueconfig['startuptime'] + 2
+        #curtimeout = self.ueconfig['startuptime']
+        curtimeout = 0
         for index, timeout in enumerate(timeouts):
             curtimeout = curtimeout + timeout
 
@@ -345,7 +355,8 @@ class TmtcUt(object):
             if subreport.getresult():
                 passnum += 1
                 phrase = " Pass"
-            self.logger.logger.info('Case '+ str(index + 1) + ": " + subreport.getdesc() + phrase)
+            self.logger.logger.info('Case '+ str(index + 1) + ": " + subreport.getdesc() + phrase
+                                    + ', takes ' + repr(subreport.getruntime()) + ' s')
 
         if casenum == passnum:
             self.logger.logger.info('All the ' + str(casenum) + " Cases Passed.")
@@ -431,6 +442,7 @@ if __name__ == '__main__':
     tmtc = TmtcUt(confdir="cases/mo_status_confirm/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
+
     #TODO: report collect and html?
     #TODO: log collect: cap log is not needed, all log config file in one dir
     #TODO: add some cases check about failed scenarioes

@@ -33,14 +33,14 @@
     {
       "desc": "Subscribe/Notify",
       "xml": "subs_notify.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd":  ""
     },
 
     {
       "desc": "MT call",
       "xml": "mt_precond_desire_none.xml",
-      "timeout": 6,
+      "timeout": 8,
       "tmtccmd":  "",
       "opts": " 127.0.0.1:5065"
     }

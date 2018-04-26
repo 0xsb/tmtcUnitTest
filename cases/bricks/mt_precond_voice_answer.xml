@@ -26,7 +26,7 @@
   	detailed flow please refer to mt_precond.txt
 	NOTE: sdp version MUST be updated
   -->
-  <send retrans="2000">
+  <send retrans="500">
     <![CDATA[
 
       INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0

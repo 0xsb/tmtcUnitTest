@@ -12,7 +12,7 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
-      "startuptime": 3,
+      "startuptime": 4,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
@@ -32,7 +32,7 @@
     {
       "desc": "Subscribe/Notify",
       "xml": "subs_notify.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd":  ""
     },
 

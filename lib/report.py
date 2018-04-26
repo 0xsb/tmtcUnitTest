@@ -12,6 +12,7 @@ class subreport(dict):
         self.__desc = None
         self.__cmd = None
         self.__timeout = None
+        self.__runtime = 0
         super(subreport, self).__init__(*arg, **kw)
 
     def setresult(self, result):
@@ -25,6 +26,12 @@ class subreport(dict):
 
     def settimeout(self,timeout):
         self.__timeout = timeout
+
+    def setruntime(self, runtime):
+        self.__runtime = runtime
+
+    def getruntime(self):
+        return self.__runtime
 
     def getresult(self):
         return self.__result
@@ -44,6 +51,7 @@ class subreport(dict):
         rstr['desc'] = self.__desc
         rstr['cmd'] = self.__cmd
         rstr['timeout'] = self.__timeout
+        rstr["runtime"] = self.__runtime
         return rstr
 
 class report(dict):
@@ -99,6 +107,7 @@ class report(dict):
         for index, subr in enumerate(self.__subreports):
             rstr["subreports"].append(subr.todict())
         return rstr
+
 
 #write a report generator for test
 def genTestReport(reportmax=4, subrepmax=3):

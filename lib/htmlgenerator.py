@@ -41,7 +41,7 @@ class htmlgenerator():
         tab = table(border=1)
         cap = caption(b("Summary"))
         tab.add(cap)
-        theaders = ["Total", "Pass", "Failed"]
+        theaders = ["RunTime","Total", "Pass", "Failed"]
         for theader in theaders:
             tab.add(th(theader))
         totalnum = len(self.data)
@@ -52,13 +52,19 @@ class htmlgenerator():
                 passnum += 1
         failnum = totalnum - passnum
         onetr = tr()
+
+        timesum = 0
+        for data in self.data:
+            timesum = timesum + data["runtime"]
+
+        timetd = td(format(timesum,'.3f') + 's')
         totaltd = td(totalnum)
         passtd = td(passnum,style="background-color: green")
         if failnum > 0:
             failtd = td(failnum, style="background-color: red")
         else:
             failtd = td(failnum)
-
+        onetr.add(timetd)
         onetr.add(totaltd)
         onetr.add(passtd)
         onetr.add(failtd)
@@ -73,7 +79,7 @@ class htmlgenerator():
         tab = table(border=1)
         cap = caption(b("Cases Report"))
         tab.add(cap)
-        theaders = ["No", "Case", "Result", "SubCase", "SubResult"]
+        theaders = ["No", "Case", "RunTime","Result", "SubCase", "RunTime","SubResult"]
         for theader in theaders:
             tab.add(th(theader))
 
@@ -84,6 +90,7 @@ class htmlgenerator():
             firsttr = tr()
             sublen = len(data["subreports"])
             notd = td(index+1, rowspan=sublen)
+            timetd = td(format(data["runtime"], '.3f') + 's', rowspan=sublen)
             casetd = td(data["desc"], rowspan=sublen)
 
             if data["result"] == True:
@@ -92,6 +99,7 @@ class htmlgenerator():
                 resulttd = td("Failed", style="background-color: red", rowspan=sublen)
             firsttr.add(notd)
             firsttr.add(casetd)
+            firsttr.add(timetd)
             firsttr.add(resulttd)
 
             for index, subreport in enumerate(data["subreports"]):
@@ -101,13 +109,15 @@ class htmlgenerator():
                     trinuse = firsttr
                 else:
                     trinuse = tr()
-                subtd = td(subreport["desc"])
+                desctd = td(subreport["desc"])
+                subtimetd = td(subreport["runtime"])
                 #FIXME:just write verbose code
                 if subreport["result"] == True:
                     subresulttd = td("Passed", style="background-color: green")
                 else:
                     subresulttd = td("Failed", style="background-color: red")
-                trinuse.add(subtd)
+                trinuse.add(desctd)
+                trinuse.add(subtimetd)
                 trinuse.add(subresulttd)
                 tab.add(trinuse)
 
@@ -137,7 +147,15 @@ if __name__ == '__main__':
     reportjson = [
             {
                 "category": "TMTC",
-                "subreports": [],
+                "subreports": [
+                         {
+                        "cmd": "cd /data/data/ut/RegSub_2018_03_15_15_06_08&& sipp -sf reg.xml  -p 5060 -t u1 -m 1 -trace_err  -trace_msg -message_file reg.msg  -trace_shortmsg -shortmessage_file regshort.msg ",
+                        "result": True,
+                        "timeout": 10,
+                        "desc": "MT call",
+                        "runtime": 1.1
+                        }
+                ],
                 "runtime": 17.844057,
                 "result": False,
                 "desc": "MT call"
@@ -149,13 +167,15 @@ if __name__ == '__main__':
                         "cmd": "cd /data/data/ut/RegSub_2018_03_15_15_06_08&& sipp -sf reg.xml  -p 5060 -t u1 -m 1 -trace_err  -trace_msg -message_file reg.msg  -trace_shortmsg -shortmessage_file regshort.msg ",
                         "result": True,
                         "timeout": 10,
-                        "desc": "Register"
+                        "desc": "Register",
+                        "runtime": 1.1
                     },
                     {
                         "cmd": "cd /data/data/ut/RegSub_2018_03_15_15_06_08&& sipp -sf subs_notify.xml  -p 5060 -t u1 -m 1 -trace_err  -trace_msg -message_file subs_notify.msg  -trace_shortmsg -shortmessage_file subs_notifyshort.msg ",
                         "result": True,
                         "timeout": 10,
-                        "desc": "Subscribe/Notify"
+                        "desc": "Subscribe/Notify",
+                        "runtime": 10
                     }
                 ],
                 "runtime": 11.792572,
@@ -172,7 +192,7 @@ if __name__ == '__main__':
     hg.genReportTable()
     hg.dump()
     """
-    hg = htmlgenerator(data=reportjson)
+    hg = htmlgenerator(data=reportjson,outdir='./')
     hg.addstyle()
     hg.genSummary()
     hg.genReportTable()

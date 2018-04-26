@@ -24,7 +24,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 2,
+      "timeout": 4,
       "tmtccmd": "c-reg"
 
     },
@@ -32,14 +32,14 @@
     {
       "desc": "Subscribe/Notify",
       "xml": "subs_notify.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd":  ""
     },
 
     {
       "desc": "MT call",
       "xml": "mt.xml",
-      "timeout": 6,
+      "timeout": 8,
       "tmtccmd":  "",
       "opts": " 127.0.0.1:5065"
     }

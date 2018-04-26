@@ -33,7 +33,7 @@
     {
       "desc": "Subscribe/Notify",
       "xml": "subs_notify.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd":  ""
     },
 

@@ -37,7 +37,7 @@
 
   <pause milliseconds="500"/>
 
- <send retrans="2000">
+ <send retrans="500">
     <![CDATA[
       NOTIFY sip:[$uac_uri] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];rport;branch=[branch]
