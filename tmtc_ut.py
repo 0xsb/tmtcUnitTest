@@ -235,7 +235,7 @@ class TmtcUt(object):
             desc = sippcmd['desc']
             substart = datetime.now()
             try:
-                self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
+                self.logger.logger.info('NOTE: start to run sippcmd '+ cmd + ' with timeout ' + str(timeout))
                 sipptask = eadbshell(cmd=cmd, timeout=timeout)
                 sipprunning[index] = True
                 sipptask.run()
@@ -297,16 +297,16 @@ class TmtcUt(object):
             timeout = nccmd['timeout']
             wtime = 0
             while not sipprunning[index]:
-                wtime += 0.5
-                time.sleep(0.5)
-                self.logger.logger.info("wait 0.5s for " + sippcmds[index]['cmd'] + " to start")
-                if wtime > 10:
-                    self.logger.logger.error("wait for 10s " + sippcmds[index]['cmd'])
+                wtime += 0.2
+                time.sleep(0.2)
+                self.logger.logger.info("wait 0.2s for " + sippcmds[index]['cmd'] + " to start")
+                if wtime > sippcmds[index-1]["timeout"]:
+                    self.logger.logger.error("wait for " + sippcmds[index-1]["timeout"]  + " s"  + sippcmds[index]['cmd'])
                     break
 
             if cmd != DUMMY_CMD:
                 try:
-                    self.logger.logger.info('NOTE: start to run '+ cmd + ' with timeout ' + str(timeout))
+                    self.logger.logger.info('NOTE: start to run nccmd '+ cmd + ' with timeout ' + str(timeout))
                     nctask = eadbshell(cmd=cmd, timeout=timeout)
                     nctask.run()
                 except:
@@ -421,6 +421,7 @@ class TmtcUt(object):
         ncprocess.start()
 
         ncprocess.join()
+
         sippprocess.join()
 
         #kill tmtclient
@@ -439,7 +440,7 @@ class TmtcUt(object):
 
 if __name__ == '__main__':
     #tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
-    tmtc = TmtcUt(confdir="cases/mo_status_confirm/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/precond/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
 

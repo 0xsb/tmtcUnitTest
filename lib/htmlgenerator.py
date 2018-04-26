@@ -110,7 +110,7 @@ class htmlgenerator():
                 else:
                     trinuse = tr()
                 desctd = td(subreport["desc"])
-                subtimetd = td(subreport["runtime"])
+                subtimetd = td(format(subreport["runtime"], '.3f') + 's')
                 #FIXME:just write verbose code
                 if subreport["result"] == True:
                     subresulttd = td("Passed", style="background-color: green")
