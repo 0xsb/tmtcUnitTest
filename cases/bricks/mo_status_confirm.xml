@@ -143,8 +143,8 @@
   
  <nop display=">>>>> precondition finished <<<<" crlf="true"/>
  <nop display=">>>>> send 183 while codec is changed, To tag is changed, branch is original <<<<" crlf="true"/>
- <nop display=">>>>> wait 2s <<<<" crlf="true"/> 
- <pause milliseconds="1000"/>
+ <nop display=">>>>> wait 500ms <<<<" crlf="true"/>
+ <pause milliseconds="500"/>
  
   <send>
     <![CDATA[

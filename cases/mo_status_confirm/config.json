@@ -25,7 +25,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 2,
+      "timeout": 3,
       "tmtccmd": "c-reg"
 
     },
@@ -47,7 +47,7 @@
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 4,
+      "timeout": 6,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

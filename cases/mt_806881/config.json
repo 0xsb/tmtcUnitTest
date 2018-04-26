@@ -13,7 +13,7 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
-      "startuptime": 2,
+      "startuptime": 3,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"

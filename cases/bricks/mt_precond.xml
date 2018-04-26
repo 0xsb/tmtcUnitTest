@@ -155,12 +155,12 @@ Content-Length: [len]
     ]]>
   </send>
 
-  <nop display=">>>>> wait for 2s and BYE <<<<" crlf="true"/>
-  <pause milliseconds="2000"/>
+  <nop display=">>>>> wait for 500ms and BYE <<<<" crlf="true"/>
+  <pause milliseconds="500"/>
 
 
   <!-- The 'crlf' option inserts a blank line in the statistics report. -->
-  <send retrans="2000">
+  <send retrans="500">
     <![CDATA[
 
       BYE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
