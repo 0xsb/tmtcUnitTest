@@ -1,6 +1,6 @@
 {
   "description": {
-      "scenario" : "MO Qos sendrecv",
+      "scenario" : "mo_precon_sendrecv",
       "bugid" : "dummy",
       "commitid" : "abcdefg",
       "category" : "Call",
@@ -46,7 +46,7 @@
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 4,
+      "timeout": 5,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

@@ -1,6 +1,6 @@
 {
   "description": {
-      "scenario" : "<UE MT call SIPp>",
+      "scenario" : "mt",
       "bugid" : "123456",
       "commitid" : "abcdefg",
       "category" : "Call",

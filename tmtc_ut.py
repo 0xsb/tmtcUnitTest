@@ -155,7 +155,7 @@ class TmtcUt(object):
         self.utils.mv(outputdir + "/mme*.log", uelogdir)
         self.utils.mv(outputdir + "/profiles", uelogdir)
         self.utils.mv(outputdir + "/*.cap", uelogdir)
-
+        self.utils.mv(outputdir + "/main*.log", uelogdir)
         self.utils.mv(outputdir + "/*.msg", sipplogdir)
         self.utils.mv(outputdir + "/*_errors.log", sipplogdir)
         self.utils.mv(outputdir + "/*_calldebug.log", sipplogdir)
@@ -198,8 +198,7 @@ class TmtcUt(object):
         timeouts = self.cmdenv.gettimeouts()
 
         #tmtclient timeout is the sum of all timeout plus
-        #curtimeout = self.ueconfig['startuptime']
-        curtimeout = 0
+        curtimeout = self.ueconfig['startuptime']
         for index, timeout in enumerate(timeouts):
             curtimeout = curtimeout + timeout
 
@@ -329,7 +328,7 @@ class TmtcUt(object):
         tcpdumpcmd = 'adb shell tcpdump -i any -w ' + self.execdir + '/' + capname + '.cap'
 
         try:
-            self.logger.logger.info('NOTE: start to run '+ tcpdumpcmd + ' with timeout ' + str(curtimeout))
+            self.logger.logger.info('NOTE: start to run tcpcmd '+ tcpdumpcmd + ' with timeout ' + str(curtimeout))
             tmtctask = etask(cmd=tcpdumpcmd, timeout=curtimeout, retry=1)
             tmtctask.run()
         except:
@@ -338,6 +337,26 @@ class TmtcUt(object):
             estr = str(etype) + ' ' + str(evalue)
             self.logger.logger.info("Unexpected error: " + estr)
 
+    def mainlogthread(self):
+        timeouts = self.cmdenv.gettimeouts()
+        #logcat timeout is the sum of all timeout plus
+        #curtimeout = self.ueconfig['startuptime']
+        curtimeout = 0
+        for index, timeout in enumerate(timeouts):
+            curtimeout = curtimeout + timeout
+
+        mainname = re.sub(r'[\s+]', '_', self.cmdenv.getCasename())
+        logcatcmd = 'adb shell logcat -s TMTC > ' + self.execdir + '/' + 'main' + mainname + '.log'
+
+        try:
+            self.logger.logger.info('NOTE: start to run logcatcmd'+ logcatcmd + ' with timeout ' + str(curtimeout))
+            tmtctask = etask(cmd=logcatcmd, timeout=curtimeout, retry=1)
+            tmtctask.run()
+        except:
+            etype = sys.exc_info()[0]
+            evalue = sys.exc_info()[1]
+            estr = str(etype) + ' ' + str(evalue)
+            self.logger.logger.info("Unexpected error: " + estr)
 
     def checkResult(self):
         #just compare the case number.
@@ -397,6 +416,11 @@ class TmtcUt(object):
         for _ in range(len(self.cmdenv.getsippcmds())):
             sipprunning.append(False)
 
+
+        logcatprocess = Process(target=self.mainlogthread)
+        logcatprocess.daemon = True
+        logcatprocess.start()
+
         #NOTE: etask will block so should use multiprocessing instead!
         #run tcpdump thread
         # AT thread will not be stopped, so AT cmd is not correct anyway.
@@ -431,6 +455,8 @@ class TmtcUt(object):
         self.killprocess(pname="tcpdump")
         tcpdumpprocess.join()
 
+        self.killprocess(pname="logcat")
+        logcatprocess.join()
         #get log
         self.getLog()
 
@@ -439,8 +465,8 @@ class TmtcUt(object):
         #analyze logs
 
 if __name__ == '__main__':
-    #tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
-    tmtc = TmtcUt(confdir="cases/precond/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
+    #tmtc = TmtcUt(confdir="cases/mt_precond_desire_none/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
 

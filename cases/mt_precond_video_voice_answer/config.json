@@ -1,6 +1,6 @@
 {
   "description": {
-      "scenario" : "MT call voice answer video call precond enabled",
+      "scenario" : "mt_precond_video_voice_answer",
       "bugid" : "dummy",
       "commitid" : "abcdefg",
       "category" : "Call precondition",
@@ -51,7 +51,7 @@
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 3,
+      "timeout": 5,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

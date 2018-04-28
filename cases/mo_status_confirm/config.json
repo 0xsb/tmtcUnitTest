@@ -1,10 +1,10 @@
 {
   "description": {
-      "scenario" : "MO Qos status confirm",
+      "scenario" : "mo_status_confirm",
       "bugid" : "dummy",
       "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "precondition status confirm",
+      "casename" : "MO precondition status confirm",
       "comments" : ""
   },
 

@@ -1,10 +1,10 @@
 {
   "description": {
-      "scenario" : "<UE Register and Subs>",
+      "scenario" : "reg",
       "bugid" : "123456",
       "commitid" : "abcdefg",
       "category" : "Registration",
-      "casename" : "RegSub"
+      "casename" : "reg"
   },
 
   "ue": {
@@ -32,7 +32,7 @@
     {
       "desc": "Subscribe/Notify",
       "xml": "subs_notify.xml",
-      "timeout": 5,
+      "timeout": 2,
       "tmtccmd":  ""
     }
 
