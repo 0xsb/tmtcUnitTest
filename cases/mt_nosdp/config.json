@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "MT call voice answer video call precond enabled",
-      "bugid" : "dummy",
-      "commitid" : "abcdefg",
-      "category" : "Call precondition",
-      "casename" : "mt_precond_video_voice_answer",
-      "comments" : "video call voice answer, precond enabled"
+      "scenario" : "mt_nosdp",
+      "bugid" : "860796",
+      "commitid" : "474572",
+      "category" : "Call",
+      "casename" : "mt_nosdp",
+      "comment" : "MT call with no sdp INVITE"
   },
 
   "ue": {
@@ -17,11 +17,7 @@
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
-      ],
-
-      "preference": {
-        "VIDEO_CALL": 0
-      }
+      ]
 
   },
 
@@ -29,7 +25,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 3,
+      "timeout": 2,
       "tmtccmd": "c-reg"
 
     },
@@ -42,9 +38,9 @@
     },
 
     {
-      "desc": "MT call voice answer video call precond enabled.",
-      "xml": "mt_precond_voice_answer.xml",
-      "timeout": 6,
+      "desc": "MT call with offerless INVITE",
+      "xml": "mt_nosdp.xml",
+      "timeout": 10,
       "tmtccmd":  "",
       "opts": " 127.0.0.1:5065"
     },

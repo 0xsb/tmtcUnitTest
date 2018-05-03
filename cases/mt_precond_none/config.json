@@ -1,10 +1,10 @@
 {
   "description": {
-      "scenario" : "precond",
+      "scenario" : "MT Precondition none",
       "bugid" : "123456",
       "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "MT Precondition none"
+      "casename" : "mt_precond"
   },
 
   "ue": {
@@ -46,7 +46,7 @@
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 5,
+      "timeout": 6,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

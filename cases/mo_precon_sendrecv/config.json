@@ -1,10 +1,10 @@
 {
   "description": {
-      "scenario" : "mo_precon_sendrecv",
+      "scenario" : "precondition MO call",
       "bugid" : "dummy",
       "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "precondition MO call "
+      "casename" : "mo_precon_sendrecv"
   },
 
   "ue": {
@@ -46,7 +46,7 @@
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 5,
+      "timeout": 6,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

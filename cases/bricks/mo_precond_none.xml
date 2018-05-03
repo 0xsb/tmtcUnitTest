@@ -25,9 +25,10 @@
   <!-- against stateful SIP proxies/B2BUAs.                             -->
   <recv request="INVITE" crlf="true">
   <action>
-    	<ereg regexp="branch=(.*);" search_in="hdr" header="Via:" assign_to="oldbranch"/>
+        <ereg regexp="branch=(.*);" search_in="hdr" header="Via:" assign_to="oldbranch"/>
 		<ereg regexp="(.*)" search_in="hdr" header="To:" assign_to="to_uri"/>
  </action>
+
   </recv>
 
   <!-- The '[last_*]' keyword is replaced automatically by the          -->
@@ -137,64 +138,42 @@
       a=curr:qos local sendrecv
       a=curr:qos remote sendrecv
       a=des:qos mandatory local sendrecv
-      a=des:qos optional remote sendrecv		
+      a=des:qos optional remote sendrecv
+      a=conf:qos remote sendrecv
     ]]>
   </send>
-  
- <nop display=">>>>> precondition finished <<<<" crlf="true"/>
- <nop display=">>>>> send 183 while codec is changed, To tag is changed, branch is original <<<<" crlf="true"/>
- <nop display=">>>>> wait 500ms <<<<" crlf="true"/>
- <pause milliseconds="500"/>
- 
+
   <send>
     <![CDATA[
 
-      SIP/2.0 183 Session Progress
+      SIP/2.0 180 Ringing
       Via: SIP/2.0/[transport] [local_ip]:[local_port];rport;[$oldbranch]
       [last_From:]
-      To: [$to_uri];tag=SIPpTag01_forking
+      [last_To:]
       [last_Call-ID:]
-      Cseq: 1 INVITE
-      Allow: INVITE,ACK,BYE,CANCEL,UPDATE,REGISTER,INFO,PRACK,SUBSCRIBE,NOTIFY,MESSAGE,REFER,PUBLISH
+      CSeq: 1 INVITE
       Contact: <sip:[local_ip]:[local_port];transport=[transport]>
-      RSeq: 3      
-      Require: 100rel,precondition
-      Supported: 100rel,precondition
-      Content-Type: application/sdp
-      Content-Length: [len]
-	  
-      v=0
-      o=user1 53655765 2353687639 IN IP[local_ip_type] [local_ip]
-      s=-
-      c=IN IP[media_ip_type] [media_ip]
-      t=0 0
-      m=audio [media_port] RTP/AVP 99
-      a=rtpmap:99 AMR/8000
-      a=sendrecv
-      a=curr:qos local sendrecv
-      a=curr:qos remote sendrecv
-      a=des:qos mandatory local sendrecv
-      a=des:qos optional remote sendrecv
-      a=conf:qos remote sendrecv	  
+      Require: 100rel, precondition
+      Content-Length: 0
+
     ]]>
   </send>
-  
- <nop display=">>>>> should recv PRACK with sdp <<<<" crlf="true"/>
+
   <recv request="PRACK">
   </recv>
-  <nop display=">>>>> should send 200 OK with Cseq increased <<<<" crlf="true"/> 
+
   <send>
     <![CDATA[
       SIP/2.0 200 OK
       [last_Via:]
       [last_From:]
-      To: [$to_uri];tag=SIPpTag01_forking
+      To: [$to_uri];tag=SIPpTag01
       [last_Call-ID:]
       [last_CSeq:]
       Contact: <sip:[local_ip]:[local_port];transport=[transport]>
       Content-Length: 0
     ]]>
-  </send> 
+  </send>
 
     <send >
     <![CDATA[

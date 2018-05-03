@@ -4,7 +4,7 @@
       "bugid" : "806881",
       "commitid" : "abcdefg",
       "category" : "Call precondition",
-      "casename" : "MT call for WLAN C.11a TS_34.229",
+      "casename" : "MT 806881 call for WLAN C.11a TS_34.229",
       "comments" : "qos sendrecv in INIVTE"
   },
 
@@ -40,15 +40,8 @@
     {
       "desc": "MT call",
       "xml": "mt_806881.xml",
-      "timeout": 6,
+      "timeout": 8,
       "tmtccmd":  "",
-      "opts": " 127.0.0.1:5065"
-    },
-    {
-      "desc": "UE bye",
-      "xml": "uebye.xml",
-      "timeout": 5,
-      "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }
   ]

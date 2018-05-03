@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "mo_status_confirm",
+      "scenario" : "MO precondition status confirm",
       "bugid" : "dummy",
       "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "MO precondition status confirm",
-      "comments" : ""
+      "casename" : "mo_status_confirm",
+      "comments" : "MO precondition status confirm"
   },
 
   "ue": {

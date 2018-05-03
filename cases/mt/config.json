@@ -1,10 +1,10 @@
 {
   "description": {
-      "scenario" : "mt",
+      "scenario" : "MT Call",
       "bugid" : "123456",
       "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "MT call"
+      "casename" : "mt"
   },
 
   "ue": {

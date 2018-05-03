@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "MT call voice answer video call precond enabled",
-      "bugid" : "dummy",
-      "commitid" : "abcdefg",
-      "category" : "Call precondition",
-      "casename" : "mt_precond_video_voice_answer",
-      "comments" : "video call voice answer, precond enabled"
+      "scenario" : "MO precondition precond none 180 with rel",
+      "bugid" : "866442",
+      "commitid" : "478519",
+      "category" : "Call",
+      "casename" : "mo_precond_866442",
+      "comments" : "MO precondition precond none 180 with rel"
   },
 
   "ue": {
@@ -13,15 +13,11 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
-      "startuptime": 3,
+      "startuptime":4,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
-      ],
-
-      "preference": {
-        "VIDEO_CALL": 0
-      }
+      ]
 
   },
 
@@ -42,16 +38,16 @@
     },
 
     {
-      "desc": "MT call voice answer video call precond enabled.",
-      "xml": "mt_precond_voice_answer.xml",
-      "timeout": 6,
-      "tmtccmd":  "",
+      "desc": "MO call",
+      "xml": "mo_precond_none.xml",
+      "timeout": 8,
+      "tmtccmd":  "t-call 123",
       "opts": " 127.0.0.1:5065"
     },
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 5,
+      "timeout": 6,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }
