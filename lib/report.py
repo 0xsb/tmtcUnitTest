@@ -61,6 +61,7 @@ class report(dict):
         self.__subreports = list()
         self.__runtime = 0
         self.__category = "TMTC"
+        self.__starttime = None
         super(report, self).__init__(*arg, **kw)
 
     def setresult(self ,result):
@@ -96,6 +97,12 @@ class report(dict):
     def getcategory(self):
         return self.__category
 
+    def getstarttime(self):
+        return self.__starttime
+
+    def setstarttime(self, starttime):
+        self.__starttime = starttime
+
     def todict(self):
         rstr = dict()
         rstr["result"] = self.__result
@@ -103,6 +110,7 @@ class report(dict):
         rstr["runtime"] = self.__runtime
         rstr["subreports"] = list()
         rstr["category"] = self.__category
+        rstr["starttime"] = self.__starttime
 
         for index, subr in enumerate(self.__subreports):
             rstr["subreports"].append(subr.todict())

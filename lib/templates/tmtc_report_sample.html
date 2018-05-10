@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{html_report_name}} - TestReport</title>
+    <style>
+    body {
+      background-color: #f2f2f2;
+      color: #333;
+      margin: 0 auto;
+      width: 960px;
+    }
+    #summary, #details {
+      width: 960px;
+    }
+    #summary th {
+      background-color: skyblue;
+      padding: 5px 12px;
+    }
+    #summary td {
+      background-color: lightblue;
+      text-align: center;
+      padding: 4px 8px;
+    }
+    #details th {
+      background-color: skyblue;
+      padding: 5px 12px;
+    }
+    #details td {
+      background-color: lightblue;
+      padding: 5px 12px;
+    }
+    #details .detail {
+      background-color: lightgrey;
+      font-size: smaller;
+      padding: 5px 10px;
+      text-align: center;
+    }
+    #details .success {
+      background-color: greenyellow;
+    }
+    #details .error {
+      background-color: red;
+    }
+    #details .failure {
+      background-color: salmon;
+    }
+    #details .skipped {
+      background-color: gray;
+    }
+
+    .button {
+      font-size: 1em;
+      padding: 6px;
+      width: 4em;
+      text-align: center;
+      background-color: #06d85f;
+      border-radius: 20px/50px;
+      cursor: pointer;
+      transition: all 0.3s ease-out;
+    }
+    a.button{
+      color: gray;
+      text-decoration: none;
+    }
+    .button:hover {
+      background: #2cffbd;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      transition: opacity 500ms;
+      visibility: hidden;
+      opacity: 0;
+    }
+    .overlay:target {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popup {
+      margin: 70px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 5px;
+      width: 30%;
+      position: relative;
+      transition: all 5s ease-in-out;
+    }
+
+    .popup h2 {
+      margin-top: 0;
+      color: #333;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+    .popup .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      transition: all 200ms;
+      font-size: 30px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #333;
+    }
+    .popup .close:hover {
+      color: #06d85f;
+    }
+    .popup .content {
+      max-height: 30%;
+      overflow: auto;
+      text-align: left;
+    }
+
+    @media screen and (max-width: 700px) {
+      .box {
+        width: 70%;
+      }
+      .popup {
+        width: 70%;
+      }
+    }
+
+  </style>
+</head>
+<body>
+<h1>Test Report: {{html_report_name}}</h1>
+  <h2>Summary</h2>
+  <table id="summary">
+      <tr>
+      <th>START AT</th>
+      <td colspan="3">{{time.start_at}}</td>
+    </tr>
+    <tr>
+      <th>DURATION</th>
+      <td colspan="3">{{ time.duration }} seconds</td>
+    </tr>
+    <tr>
+      <th>TOTAL</th>
+      <th>SUCCESS</th>
+      <th>FAILED</th>
+      <th>SKIPPED</th>
+    </tr>
+    <tr>
+      <td>{{stat.testsRun}}</td>
+      <td>{{stat.successes}}</td>
+      <td>{{stat.failures}}</td>
+      <td>{{stat.skipped}}</td>
+    </tr>
+
+  </table>
+
+  <h2>Details</h2>
+  <table id="details">
+    <tr>
+      <th>No.</th>
+      <th>Case</th>
+      <th>RunTime</th>
+      <th>Result</th>
+        <th>SubCase</th>
+        <th>SubRunTime</th>
+        <th>SubResult</th>
+    </tr>
+      {% for report in reports -%}
+      <tr>
+        <td rowspan="{{report.subnum}}">{{report.index}}</td>
+        <td rowspan="{{report.subnum}}">{{report.desc}}</td>
+        <td rowspan="{{report.subnum}}">{{ "%.3f" |format(report.runtime)}}</td>
+        <td rowspan="{{report.subnum}}" class="{{report.result}}">{{report.result}}</td>
+        {# first line -#}
+          {% for subreport in report.subreports  -%}
+          {% if loop.index == 1 -%}
+        <td>{{subreport.desc}}</td>
+        <td>{{"%.3f" |format(subreport.runtime)}}</td>
+        <td class="{{subreport.result}}">{{subreport.result}}</td>
+          {% endif -%}
+          {% endfor -%}
+      </tr>
+          {% for subreport in report.subreports -%}
+            {% if loop.index != 1 -%}
+            <tr>
+             <td>{{subreport.desc}}</td>
+            <td>{{ "%.3f" |format(subreport.runtime)}}</td>
+            <td class="{{subreport.result}}">{{subreport.result}}</td>
+            </tr>
+            {% endif -%}
+          {% endfor -%}
+      {% endfor -%}
+  </table>
+</body>
+</html>

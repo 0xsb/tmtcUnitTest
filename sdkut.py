@@ -5,7 +5,7 @@ from tmtc_ut import *
 from time import gmtime, strftime
 from lib.report import *
 from lib.htmlgenerator import *
-
+from lib.jinjagenerator import *
 
 class Sdkut(object):
     def __init__(self, casedir='', bindir=''):
@@ -45,11 +45,24 @@ class Sdkut(object):
         with open(self.outdir + '/report.json', 'w+') as f:
             f.write(json.dumps(fjson, indent=4))
 
+        #old style html
+        """
         hg = htmlgenerator(data=fjson, outdir=self.outdir)
         hg.addstyle()
         hg.genSummary()
         hg.genReportTable()
         hg.dump()
+        """
+        summary = convert(fjson)
+        temphtml = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)),
+            "lib/templates",
+            "tmtc_report_sample.html"
+        )
+        jinja2 = JinjaGenerator(templatehtml=temphtml, data=summary)
+        html = jinja2.render()
+        with open(self.outdir + "/report.html", "w+") as file:
+            file.write(html)
 
 if __name__ == '__main__':
     sdk = Sdkut(casedir="./cases", bindir='./bin')

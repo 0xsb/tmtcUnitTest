@@ -7,6 +7,7 @@ from lib.logutils import *
 from lib.cmdhelper import *
 from lib.logConf import *
 from lib.ueconfig import *
+from lib.jinjagenerator import *
 from datetime import datetime
 import sys
 import os
@@ -391,6 +392,7 @@ class TmtcUt(object):
         desc = self.cmdenv.getCasename()
         self.casereport.setdesc(desc)
         self.casereport.setcategroy(self.cmdenv.getCategory())
+        self.casereport.setstarttime(self.starttime.strftime('%Y.%m.%d %H:%M:%S'))
 
     def getreport(self):
         return self.casereport
@@ -469,6 +471,24 @@ if __name__ == '__main__':
     tmtc = TmtcUt(confdir="cases/mo_status_confirm/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
+    rjson = tmtc.getreport().todict()
+    print json.dumps(rjson, indent=4)
+    reports = list()
+    reports.append(rjson)
+    print reports
+    summary = convert(reports)
+    temphtml = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)),
+        "lib/templates",
+        "tmtc_report_sample.html"
+    )
+
+    print summary
+    jinja2 = JinjaGenerator(templatehtml=temphtml, data=summary)
+    html = jinja2.render()
+
+    with open("./jinja1.html", "w+") as file:
+        file.write(html)
 
     #TODO: report collect and html?
     #TODO: log collect: cap log is not needed, all log config file in one dir

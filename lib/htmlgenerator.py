@@ -6,6 +6,9 @@
 #1. genindex
 #2. overall report
 #3. category report
+
+
+#FIXME: deperated, field is changing.
 #99. TODO: use jinja2, copy from http://cn.httprunner.org/report/
 #    https://www.computerhope.com/htmcolor.htm
 #    https://github.com/HttpRunner/HttpRunner/blob/master/httprunner/templates/default_report_template.html
