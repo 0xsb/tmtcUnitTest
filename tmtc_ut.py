@@ -468,7 +468,7 @@ class TmtcUt(object):
 
 if __name__ == '__main__':
     #tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
-    tmtc = TmtcUt(confdir="cases/mo_status_confirm/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/substimeout_869343/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
     rjson = tmtc.getreport().todict()

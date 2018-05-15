@@ -1,0 +1,62 @@
+{
+  "description": {
+      "scenario" : "Subscription Timeout",
+      "bugid" : "869343",
+      "commitid" : "abcdefg",
+      "category" : "Subscription",
+      "casename" : "subs_timeout",
+      "comments" : "desubs will get 204"
+  },
+
+  "ue": {
+      "tmtcport" : 21904,
+      "execdir" : "/data/data/ut/",
+      "config" : "provision.ini",
+      "binary" : "tmtclient",
+      "startuptime": 3,
+      "lib" : [
+                  "libavatar_ut.so",
+                  "liblemon_ut.so"
+      ]
+
+  },
+
+  "cases": [
+    {
+      "desc": "Register",
+      "xml": "reg.xml",
+      "timeout": 2,
+      "tmtccmd": "c-reg"
+
+    },
+
+    {
+      "desc": "Subscribe/ReSubs_481",
+      "xml": "subs_resubs_481.xml",
+      "timeout": 6,
+      "tmtccmd":  ""
+    },
+
+    {
+      "desc": "Subscribe/Notify",
+      "xml": "subs_notify.xml",
+      "timeout": 3,
+      "tmtccmd":  ""
+    },
+    {
+      "desc": "De-Subs",
+      "xml": "desub.xml",
+      "timeout": 2,
+      "tmtccmd": "c-unreg"
+
+    },
+    {
+      "desc": "De-Register",
+      "xml": "dereg.xml",
+      "timeout": 2,
+      "tmtccmd": ""
+
+    }
+  ]
+
+}
