@@ -347,7 +347,7 @@ class TmtcUt(object):
             curtimeout = curtimeout + timeout
 
         mainname = re.sub(r'[\s+]', '_', self.cmdenv.getCasename())
-        logcatcmd = 'adb shell logcat -s TMTC > ' + self.execdir + '/' + 'main' + mainname + '.log'
+        logcatcmd = 'adb shell logcat -s TMTC CPVoiceAgent > ' + self.execdir + '/' + 'main' + mainname + '.log'
 
         try:
             self.logger.logger.info('NOTE: start to run logcatcmd'+ logcatcmd + ' with timeout ' + str(curtimeout))
@@ -468,7 +468,8 @@ class TmtcUt(object):
 
 if __name__ == '__main__':
     #tmtc = TmtcUt(confdir="cases/reg/", brickdir="cases/bricks/",bindir="bin")
-    tmtc = TmtcUt(confdir="cases/substimeout_869343/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/notifyprobation_855991/", brickdir="cases/bricks/",bindir="bin")
+    #tmtc = TmtcUt(confdir="cases/reg404_862531/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
     rjson = tmtc.getreport().todict()

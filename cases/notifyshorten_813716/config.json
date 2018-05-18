@@ -1,0 +1,47 @@
+{
+  "description": {
+      "scenario" : "Notify Shortened",
+      "bugid" : "813716",
+      "commitid" : "abcdefg",
+      "category" : "Subscription",
+      "casename" : "notify_shotrtened",
+      "comments" : "Notify get shortened expires"
+  },
+
+  "ue": {
+      "tmtcport" : 21904,
+      "execdir" : "/data/data/ut/",
+      "config" : "provision.ini",
+      "binary" : "tmtclient",
+      "startuptime": 3,
+      "lib" : [
+                  "libavatar_ut.so",
+                  "liblemon_ut.so"
+      ]
+
+  },
+
+  "cases": [
+    {
+      "desc": "Register",
+      "xml": "reg.xml",
+      "timeout": 2,
+      "tmtccmd": "c-reg"
+
+    },
+    {
+      "desc": "Subscribe/Notify shortened expires",
+      "xml": "subs_notify_shortened.xml",
+      "timeout": 3,
+      "tmtccmd":  ""
+    },
+    {
+      "desc": "Register",
+      "xml": "reg.xml",
+      "timeout": 4,
+      "tmtccmd": ""
+
+    }
+  ]
+
+}

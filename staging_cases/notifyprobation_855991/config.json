@@ -1,0 +1,51 @@
+{
+  "description": {
+      "scenario" : "Notify Probation",
+      "bugid" : "855991",
+      "commitid" : "abcdefg",
+      "category" : "Subscription",
+      "casename" : "notify_probation",
+      "comments" : "Notify get probation retry-after reg"
+  },
+
+  "ue": {
+      "tmtcport" : 21904,
+      "execdir" : "/data/data/ut/",
+      "config" : "provision.ini",
+      "binary" : "tmtclient",
+      "startuptime": 3,
+      "lib" : [
+                  "libavatar_ut.so",
+                  "liblemon_ut.so"
+      ],
+      "preference": {
+        "IPSEC" : 1
+      }
+
+
+  },
+
+  "cases": [
+    {
+      "desc": "Register",
+      "xml": "reg.xml",
+      "timeout": 2,
+      "tmtccmd": "c-reg"
+
+    },
+    {
+      "desc": "Subscribe/Notify probation retry-after",
+      "xml": "subs_notify_probation.xml",
+      "timeout": 3,
+      "tmtccmd":  ""
+    },
+    {
+      "desc": "Register",
+      "xml": "reg.xml",
+      "timeout": 4,
+      "tmtccmd": ""
+
+    }
+  ]
+
+}

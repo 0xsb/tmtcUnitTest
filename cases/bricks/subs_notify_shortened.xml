@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<scenario name="Basic UAS responder">
+  <!-- SUBSCRIBE -->
+  <recv request="SUBSCRIBE" crlf="true">
+    <action>
+       <!-- extract the SIP URI form the Contact header -->
+       <!-- The SIP URI is into the uac_uri variable -->
+       <!-- trash variable contains the whole header -->
+       <ereg regexp="sip:(.*)>" search_in="hdr" header="Contact" assign_to="trash,uac_uri"/>
+    	<ereg regexp="sip:(.*)>" search_in="hdr" header="From:" assign_to="trash,impu"/>
+	<ereg regexp="(.*)" search_in="hdr" header="From:" assign_to="trash,from_uri"/>
+	<ereg regexp="(.*)" search_in="hdr" header="To:" assign_to="trash,to_uri"/>
+ </action>
+  </recv>
+
+ <!-- Since SIPp complains about unused variables trash must be referenced -->
+  <Reference variables="trash"/>
+  <send>
+    <![CDATA[
+      SIP/2.0 200 OK
+      [last_Via:];received=1.1.1.1;rport=1111
+      [last_From:]
+      [last_To:];tag=[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Record-Route:<sip:[$uac_uri];routing_id=pcscf_a_side;lskpmc=PQD;lr>
+      [last_Contact:]
+      Expires: 3600
+      Content-Length: 0
+    ]]>
+  </send>
+  
+
+  <nop display=">>>>> Sending NOTIFY after 500ms <<<<" crlf="true"/>
+
+  <pause milliseconds="500"/>
+
+ <send retrans="500">
+    <![CDATA[
+      NOTIFY sip:[$uac_uri] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];rport;branch=[branch]
+      To: [$from_uri]
+      From: [$to_uri];tag=[call_number]
+      [last_Call-ID:]
+      Record-Route:<sip:[$uac_uri];routing_id=pcscf_a_side;lskpmc=PQD;lr>
+      Cseq: [cseq] NOTIFY
+      Max-Forwards: 70
+      Event: reg 
+      Subscription-State: active
+      Content-Type: application/reginfo+xml
+      Content-Length: [len]
+
+      <reginfo xmlns="urn:ietf:params:xml:ns:reginfo" version="0" state="full">
+	<registration aor="sip:[$impu]" id="2" state="terminated" >
+		<contact id="1" state="terminated" event="shortened" expires="2">
+			<uri>sip:[$uac_uri]</uri>
+			<unknown-param name="+g.3gpp.smsip" />
+			<unknown-param name="+g.3gpp.icsi-ref">&quot;urn%3Aurn-7%3A3gpp-service.ims.icsi.mmtel&quot; </unknown-param>
+			<unknown-param name="video" />
+			<unknown-param name="+sip.instance">&quot;&lt;urn:gsma:imei:86740002-063467-0&gt;&quot; </unknown-param>
+		</contact>
+	</registration>
+</reginfo>
+	]]>
+  </send>
+
+  <recv response="200" crlf="true">
+  </recv>
+
+  <!-- definition of the response time repartition table (unit is ms)   -->
+  <ResponseTimeRepartition value="10, 20, 30, 40, 50, 100, 150, 200"/>
+
+  <!-- definition of the call length repartition table (unit is ms)     -->
+  <CallLengthRepartition value="10, 50, 100, 500, 1000, 5000, 10000"/>
+
+</scenario>
