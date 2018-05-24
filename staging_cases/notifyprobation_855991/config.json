@@ -42,7 +42,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd": ""
 
     }

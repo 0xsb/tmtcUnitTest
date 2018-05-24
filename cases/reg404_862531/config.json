@@ -19,21 +19,49 @@
                   "liblemon_ut.so"
       ],
       "preference": {
-        "IPSEC" : 1
+        "IPSEC" : 1,
+        "RegExpires": 4,
+        "SubExpires":4
       }
 
   },
 
   "cases": [
     {
-      "desc": "Register",
+      "desc": "Register 404 with retry",
       "xml": "reg404.xml",
       "timeout": 2,
       "tmtccmd": "c-reg"
 
     },
     {
-      "desc": "Register",
+      "desc": "Register OK",
+      "xml": "reg.xml",
+      "timeout": 4,
+      "tmtccmd": ""
+
+    },
+    {
+      "desc": "Subscribe/Notify",
+      "xml": "subs_notify.xml",
+      "timeout": 3,
+      "tmtccmd":  ""
+    },
+    {
+      "desc": "Register 500 without retry",
+      "xml": "reg500.xml",
+      "timeout": 3,
+      "tmtccmd": "",
+      "comments": "regExpires is set 4s"
+    },
+    {
+      "desc": "Register 404 with retry",
+      "xml": "reg404.xml",
+      "timeout": 2,
+      "tmtccmd": ""
+    },
+        {
+      "desc": "new initial Register OK",
       "xml": "reg.xml",
       "timeout": 4,
       "tmtccmd": ""
@@ -45,6 +73,7 @@
       "timeout": 3,
       "tmtccmd":  ""
     }
+
   ]
 
 }

@@ -1,0 +1,65 @@
+{
+  "description": {
+      "scenario" : "MO/MT Call",
+      "bugid" : "123456",
+      "commitid" : "abcdefg",
+      "category" : "Call",
+      "casename" : "mo_mt"
+  },
+
+  "ue": {
+      "tmtcport" : 21904,
+      "execdir" : "/data/data/ut/",
+      "config" : "provision.ini",
+      "binary" : "tmtclient",
+      "startuptime": 3,
+      "lib" : [
+                  "libavatar_ut.so",
+                  "liblemon_ut.so"
+      ]
+
+  },
+
+  "cases": [
+    {
+      "desc": "Register",
+      "xml": "reg.xml",
+      "timeout": 4,
+      "tmtccmd": "c-reg"
+
+    },
+
+    {
+      "desc": "Subscribe/Notify",
+      "xml": "subs_notify.xml",
+      "timeout": 3,
+      "tmtccmd":  ""
+    },
+
+    {
+      "desc": "MT call",
+      "xml": "mt.xml",
+      "timeout": 8,
+      "tmtccmd":  "",
+      "opts": " 127.0.0.1:5065"
+    },
+
+    {
+      "desc": "MO call",
+      "xml": "mo.xml",
+      "timeout": 4,
+      "tmtccmd":  "t-call 123",
+      "opts": " 127.0.0.1:5065"
+    },
+
+    {
+      "desc": "UE bye",
+      "xml": "uebye.xml",
+      "timeout": 6,
+      "tmtccmd":  "t-bye",
+      "opts": " 127.0.0.1:5065"
+    }
+
+  ]
+
+}

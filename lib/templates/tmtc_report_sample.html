@@ -172,13 +172,13 @@
       <tr>
         <td rowspan="{{report.subnum}}">{{report.index}}</td>
         <td rowspan="{{report.subnum}}">{{report.desc}}</td>
-        <td rowspan="{{report.subnum}}">{{ "%.3f" |format(report.runtime)}}</td>
+        <td rowspan="{{report.subnum}}">{{ "%.3f" |format(report.runtime)}}s</td>
         <td rowspan="{{report.subnum}}" class="{{report.result}}">{{report.result}}</td>
         {# first line -#}
           {% for subreport in report.subreports  -%}
           {% if loop.index == 1 -%}
         <td>{{subreport.desc}}</td>
-        <td>{{"%.3f" |format(subreport.runtime)}}</td>
+        <td>{{"%.3f" |format(subreport.runtime)}}s</td>
         <td class="{{subreport.result}}">{{subreport.result}}</td>
           {% endif -%}
           {% endfor -%}
@@ -187,7 +187,7 @@
             {% if loop.index != 1 -%}
             <tr>
              <td>{{subreport.desc}}</td>
-            <td>{{ "%.3f" |format(subreport.runtime)}}</td>
+            <td>{{ "%.3f" |format(subreport.runtime)}}s</td>
             <td class="{{subreport.result}}">{{subreport.result}}</td>
             </tr>
             {% endif -%}
