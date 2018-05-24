@@ -24,7 +24,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 2,
+      "timeout": 4,
       "tmtccmd": "c-reg"
 
     },

@@ -55,7 +55,7 @@
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 6,
+      "timeout": 8,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }
