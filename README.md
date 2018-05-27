@@ -3,6 +3,7 @@
 tmtcUnitTest is a simple framework to do CI in IMS stack.
 [SIPp](http://sipp.sourceforge.net/) is used to unit test various VoIP scenarioes.
 Running logs are collected to check test result and generate reports. 
+
 **Similar to Spirent Instrument's IMS test Module~~**
 ## design
 - IMS stack process called **tmtclient**  is running on an Android phone
@@ -13,9 +14,9 @@ Overall  Architecture
 ![tmtc_arch](/sample/tmtc_ut_framework.png)
 ## Key Feature
 - various IMS scenarioes with different Gateway are defined in SIPp xmls 
-	- all base xmls are located in [bricks](/cases/bricks)
+	- all base xmls are located in [bricks](/cases/bricks) dir
 - case can be easily added by json format config
-	-  sample case definition  refer to [reg](cases/reg) 
+	-  sample case definition  refer to config.json in [reg](cases/reg) dir
 ```
 {  
   "description": {  
