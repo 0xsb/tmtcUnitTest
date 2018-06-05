@@ -65,6 +65,7 @@ class adbhelper:
 #def adb_shell
 
 #https://imsardine.wordpress.com/2012/06/05/android-adb-shell-exit-status/
+# adb shell 'sipp; echo -n $?'
 def adb_shell(shell_cmds):
     #in case , so start a new line
     shell_cmds += '; echo -e \'\n\'$?'

@@ -42,9 +42,15 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 3,
+      "timeout": 4,
       "tmtccmd": ""
 
+    },
+    {
+      "desc": "Subscribe/Notify",
+      "xml": "subs_notify.xml",
+      "timeout": 3,
+      "tmtccmd":  ""
     }
   ]
 

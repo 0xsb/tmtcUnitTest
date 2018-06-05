@@ -40,7 +40,7 @@
     {
       "desc": "MO call",
       "xml": "mo_status_confirm.xml",
-      "timeout": 8,
+      "timeout": 10,
       "tmtccmd":  "t-call 123",
       "opts": " 127.0.0.1:5065"
     },
