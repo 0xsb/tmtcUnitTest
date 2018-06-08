@@ -21,6 +21,9 @@ TMTC_CMDS.append('c-unreg')
 TMTC_CMDS.append('t-call')
 TMTC_CMDS.append('t-answer')
 TMTC_CMDS.append('t-bye')
+TMTC_CMDS.append('t-hold')
+TMTC_CMDS.append('t-unhold')
+
 
 def validCmd(cmd):
     cmd = cmd.strip()

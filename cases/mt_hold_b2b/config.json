@@ -1,11 +1,10 @@
 {
   "description": {
-      "scenario" : "mt_nosdp",
-      "bugid" : "860796",
-      "commitid" : "474572",
+      "scenario" : "MT B2B hold resume",
+      "bugid" : "881974 ",
+      "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "mt_nosdp",
-      "comment" : "MT call with no sdp INVITE"
+      "casename" : "mt_hold_resume"
   },
 
   "ue": {
@@ -38,10 +37,24 @@
     },
 
     {
-      "desc": "MT call with offerless INVITE",
-      "xml": "mt_nosdp.xml",
-      "timeout": 10,
+      "desc": "MT call with precond none",
+      "xml": "mt_precond.xml",
+      "timeout": 7,
       "tmtccmd":  "",
+      "opts": " 127.0.0.1:5065"
+    },
+    {
+      "desc": "UE hold",
+      "xml": "b2bhold.xml",
+      "timeout": 3,
+      "tmtccmd":  "t-hold",
+      "opts": " 127.0.0.1:5065"
+    },
+    {
+      "desc": "UE resume",
+      "xml": "b2bresume.xml",
+      "timeout": 3,
+      "tmtccmd":  "t-unhold",
       "opts": " 127.0.0.1:5065"
     },
     {

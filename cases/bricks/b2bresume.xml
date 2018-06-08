@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<scenario name="Basic UAS responder">
+  <recv request="INVITE" crlf="true">
+      <action>
+       <!-- extract the SIP URI form the Contact header -->
+       <!-- The SIP URI is into the uac_uri variable -->
+       <!-- trash variable contains the whole header -->
+	<ereg regexp="(.*)" search_in="hdr" header="From:" assign_to="trash,from_uri"/>
+	<ereg regexp="(.*)" search_in="hdr" header="To:" assign_to="trash,to_uri"/>
+ </action>
+  </recv>
+
+  <send>
+    <![CDATA[
+
+      SIP/2.0 100 Trying
+      [last_Via:]
+      From: [$from_uri]
+      To: [$to_uri]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+<send retrans="500">
+    <![CDATA[
+
+      SIP/2.0 200 OK
+      [last_Via:]
+      From: [$from_uri]
+      To: [$to_uri]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687640 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 100
+      a=rtpmap:100 AMR-WB/16000
+      a=fmtp:100 mode-change-capability=2;max-red=0
+      a=sendrecv
+    ]]>
+  </send>
+
+  <recv request="ACK">
+  </recv>
+
+ <nop display=">>>>> Sending B2BUA re-INVITE withoud sdp<<<<" crlf="true"/>
+  <send retrans="2000">
+    <![CDATA[
+
+      INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: [$to_uri]
+      To: [$from_uri]
+      [last_Call-ID:]
+      Session-Expires: 7200;refresher=uac
+      Min-SE: 90
+      Supported: timer
+      CSeq: 5 INVITE
+      Contact: sip:sipp@[local_ip]:[local_port]
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Length: 0
+
+    ]]>
+  </send>
+
+  <recv response="100"
+        optional="true">
+  </recv>
+
+  <recv response="200">
+  </recv>
+<send>
+    <![CDATA[
+
+      ACK sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: [$to_uri]
+      To: [$from_uri]
+      [last_Call-ID:]
+      CSeq: 5 ACK
+      Contact: sip:sipp@[local_ip]:[local_port]
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687641 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 100
+      a=rtpmap:100 AMR-WB/16000
+      a=fmtp:100 mode-change-capability=2;max-red=0
+      a=sendrecv
+      ]]>
+</send>
+
+
+</scenario>
+
