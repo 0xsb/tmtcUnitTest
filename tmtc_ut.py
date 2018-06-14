@@ -1,6 +1,8 @@
 #-*- coding=utf-8 -*-
 #author: zhihua.ye@spreadtrum.com
-
+#to benchmark
+#python -m cProfile -o tmtc.prof -s tottime tmtc_ut.py
+#gprof2dot -f pstats tmtc.prof | dot -Tpng -o tmtc.png
 
 from lib.adbhelper import *
 from lib.logutils import *
@@ -16,20 +18,17 @@ from lib.report import *
 import shutil
 
 
-# 1. env setup
-# 2. process goes
-# 3. result check
-
 class utException(Exception):
     def __init__(self, msg):
         super(utException, self).__init__(msg)
         self.message = msg
 
-
+outerdir = './'
 class TmtcUt(object):
     def __init__(self, outdir = './output', loglevel='DEBUG', confdir='', brickdir='',bindir=''):
         #logConf is single instance
         self.logger = logConf(debuglevel=loglevel)
+        outerdir = outdir
         self.outdir = outdir
         self.confdir = confdir
         self.brickdir = brickdir
@@ -216,6 +215,7 @@ class TmtcUt(object):
             self.logger.logger.info("Unexpected error: " + estr)
         #add one more cmd to exit zsh
 
+
     def sippthread(self, sharedreport, sipprunning):
         """
 
@@ -281,6 +281,7 @@ class TmtcUt(object):
         #self.checkResult()
         #self.termtmtc()
 
+
     def ncthread(self, sipprunning):
         """
         netcat thread
@@ -317,6 +318,7 @@ class TmtcUt(object):
 
     # start a thread to collect main log
     # main log can be used to collect media cmd,
+
     def tcpdumpthread(self):
         timeouts = self.cmdenv.gettimeouts()
         #logcat timeout is the sum of all timeout plus
@@ -337,6 +339,7 @@ class TmtcUt(object):
             evalue = sys.exc_info()[1]
             estr = str(etype) + ' ' + str(evalue)
             self.logger.logger.info("Unexpected error: " + estr)
+
 
     def mainlogthread(self):
         timeouts = self.cmdenv.gettimeouts()

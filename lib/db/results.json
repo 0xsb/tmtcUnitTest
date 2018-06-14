@@ -1,0 +1,35 @@
+[
+  {
+    "name": "id",
+    "type": "integer",
+    "attr": "primary"
+  },
+  {
+    "name": "total",
+    "type": "integer"
+  },
+  {
+    "name": "pass",
+    "type": "integer"
+  },
+  {
+    "name": "failed",
+    "type": "integer"
+  },
+  {
+    "name": "skipped",
+    "type": "integer"
+  },
+  {
+    "name": "starttime",
+    "type": "TEXT"
+  },
+  {
+    "name": "duration",
+    "type": "integer"
+  },
+  {
+    "name": "procedure",
+    "type": "TEXT"
+  }
+]
