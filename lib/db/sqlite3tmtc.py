@@ -14,21 +14,25 @@ import glob
 def find_report(outputdir):
     #whole running is start like 2018_05_...
     globpattern = outputdir + "/[2-9][0-9][0-9][0-9]_*/"
-    records = list()
     for dname in glob.glob(globpattern):
         fname = dname + 'report.json'
-        if os.path.isfile(fname):
-            with open(fname) as jsonf:
-                report = json.load(jsonf)
-                record = json_to_record(report)
-                #print record
-                records.append(record)
+        return load_records(fname)
+
+
+def load_records(fname):
+    records = list()
+    if os.path.isfile(fname):
+        with open(fname) as jsonf:
+            report = json.load(jsonf)
+            record = json_to_record(report)
+            #print record
+            records.append(record)
     return records
 
 def json_to_record(report):
     """
     some report.json is old file, just convert to db data
-    record is just a list
+    record is just a tuple
     :param report:
     :return:
     """
@@ -48,7 +52,7 @@ def json_to_record(report):
 
 class sqlite3Tmtc(object):
     def __init__(self, dbname):
-        self.dbname = dbname
+        self.dbname = os.path.basename(dbname)
         self.conn = sqlite3.connect(dbname)
         self.cursor = self.conn.cursor()
         #use curtab to track table in use.
@@ -91,6 +95,7 @@ class sqlite3Tmtc(object):
 
     def insert_records(self, datas):
         istr = sqlitehelper.gen_insertstr(self.curtab, self.colnames)
+        print istr
         try:
             with self.conn:
                 self.conn.executemany(istr, datas)
@@ -102,7 +107,7 @@ class sqlite3Tmtc(object):
         self.conn.close()
 
 if __name__ == '__main__':
-    st = sqlite3Tmtc(dbname="tmtcsprd.db")
+    st = sqlite3Tmtc(dbname="./tmtcsprd.db")
     st.add_table('./results.json')
     data = (12, 8, 4, 0, "2018-06-14 12:12:12", "12.123", "{}")
     st.insert_onerecord(data)

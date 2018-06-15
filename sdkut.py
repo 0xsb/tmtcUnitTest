@@ -6,6 +6,7 @@ from time import gmtime, strftime
 from lib.report import *
 from lib.htmlgenerator import *
 from lib.jinjagenerator import *
+from lib.db.sqlite3tmtc import *
 
 class Sdkut(object):
     def __init__(self, casedir='', bindir=''):
@@ -44,6 +45,13 @@ class Sdkut(object):
 
         with open(self.outdir + '/report.json', 'w+') as f:
             f.write(json.dumps(fjson, indent=4))
+
+        #store result to db
+        st = sqlite3Tmtc(dbname="./tmtcsprd.db")
+        st.add_table('./lib/db/results.json')
+        records = load_records(self.outdir + '/report.json')
+        st.insert_records(records)
+        st.close()
 
         #old style html
         """
