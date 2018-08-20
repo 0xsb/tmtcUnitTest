@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "mt_nosdp",
-      "bugid" : "860796",
-      "commitid" : "474572",
+      "scenario" : "MO video call 183 port=0",
+      "bugid" : "918922",
+      "commitid" : "38a17c0",
       "category" : "Call",
-      "casename" : "mt_nosdp",
-      "comment" : "MT call with no sdp INVITE"
+      "casename" : "mo_video_mt_voice_918922",
+      "comments" : "MO video call MT voice answer"
   },
 
   "ue": {
@@ -13,11 +13,15 @@
       "execdir" : "/data/data/ut/",
       "config" : "provision.ini",
       "binary" : "tmtclient",
-      "startuptime": 3,
+      "startuptime":4,
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
-      ]
+      ],
+      "preference": {
+        "VIDEO_CALL": 0,
+        "PRECONDITION": 0
+      }
 
   },
 
@@ -25,7 +29,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd": "c-reg"
 
     },
@@ -38,16 +42,16 @@
     },
 
     {
-      "desc": "MT call with offerless INVITE",
-      "xml": "mt_nosdp.xml",
+      "desc": "MO call",
+      "xml": "mo_video_mt_voice_918922.xml",
       "timeout": 15,
-      "tmtccmd":  "",
+      "tmtccmd":  "t-call 123 on",
       "opts": " 127.0.0.1:5065"
     },
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 7,
+      "timeout": 6,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

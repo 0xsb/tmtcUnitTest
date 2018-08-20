@@ -74,7 +74,7 @@
       a=rtcp-fb:99 nack pli
       a=rtcp-fb:99 ccm tmmbr
       a=rtcp-fb:99 ccm fir
-	  a=curr:qos local none
+      a=curr:qos local none
       a=curr:qos remote none
       a=des:qos mandatory local sendrecv
       a=des:qos optional remote sendrecv

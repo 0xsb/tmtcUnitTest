@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "mt_nosdp",
-      "bugid" : "860796",
-      "commitid" : "474572",
+      "scenario" : "MT call voice answer video call when 180req is enabled",
+      "bugid" : "915516",
+      "commitid" : "abcdefg",
       "category" : "Call",
-      "casename" : "mt_nosdp",
-      "comment" : "MT call with no sdp INVITE"
+      "casename" : "mt_180_video_voice_answer_915516",
+      "comments" : "video call voice answer when 180req is enabled"
   },
 
   "ue": {
@@ -17,7 +17,13 @@
       "lib" : [
                   "libavatar_ut.so",
                   "liblemon_ut.so"
-      ]
+      ],
+
+      "preference": {
+        "VIDEO_CALL": 0,
+        "Req180": 1,
+        "PRECONDITION": 0
+      }
 
   },
 
@@ -25,7 +31,7 @@
     {
       "desc": "Register",
       "xml": "reg.xml",
-      "timeout": 4,
+      "timeout": 3,
       "tmtccmd": "c-reg"
 
     },
@@ -38,16 +44,16 @@
     },
 
     {
-      "desc": "MT call with offerless INVITE",
-      "xml": "mt_nosdp.xml",
-      "timeout": 15,
+      "desc": "MT call voice answer video call precond enabled.",
+      "xml": "mt_180_video_voice_answer_915516.xml",
+      "timeout": 6,
       "tmtccmd":  "",
       "opts": " 127.0.0.1:5065"
     },
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 7,
+      "timeout": 5,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

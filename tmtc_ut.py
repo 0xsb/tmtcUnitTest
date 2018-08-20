@@ -475,7 +475,7 @@ if __name__ == '__main__':
     #tmtc = TmtcUt(confdir="staging_cases/reg404_862531/", brickdir="cases/bricks/",bindir="bin")
     #tmtc = TmtcUt(confdir="cases/mt_nosdp/", brickdir="cases/bricks/",bindir="bin")
     #tmtc = TmtcUt(confdir="cases/tmtc_demo/", brickdir="cases/bricks/",bindir="bin")
-    tmtc = TmtcUt(confdir="cases/mt_hold_b2b/", brickdir="cases/bricks/",bindir="bin")
+    tmtc = TmtcUt(confdir="cases/mo_video_mt_voice_918922/", brickdir="cases/bricks/",bindir="bin")
     tmtc.envsetup()
     tmtc.run()
     rjson = tmtc.getreport().todict()
