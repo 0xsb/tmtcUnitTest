@@ -1,11 +1,11 @@
 {
   "description": {
-      "scenario" : "MO precondition status confirm",
-      "bugid" : "dummy",
-      "commitid" : "abcdefg",
+      "scenario" : "MO precondition precond none 180 before MT UPDATE",
+      "bugid" : "921303",
+      "commitid" : "abc",
       "category" : "Call",
-      "casename" : "mo_status_confirm",
-      "comments" : "MO precondition status confirm"
+      "casename" : "mo_921303_precond_none_180_before_MT_UPDATE",
+      "comments" : "MO precondition precond none 180 before MT UPDATE"
   },
 
   "ue": {
@@ -39,15 +39,15 @@
 
     {
       "desc": "MO call",
-      "xml": "mo_status_confirm.xml",
-      "timeout": 12,
+      "xml": "mo_921303_precond_none.xml",
+      "timeout": 8,
       "tmtccmd":  "t-call 123",
       "opts": " 127.0.0.1:5065"
     },
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 6,
+      "timeout": 5,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }

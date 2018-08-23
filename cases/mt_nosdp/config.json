@@ -40,14 +40,14 @@
     {
       "desc": "MT call with offerless INVITE",
       "xml": "mt_nosdp.xml",
-      "timeout": 15,
+      "timeout": 8,
       "tmtccmd":  "",
       "opts": " 127.0.0.1:5065"
     },
     {
       "desc": "UE bye",
       "xml": "uebye.xml",
-      "timeout": 7,
+      "timeout": 8,
       "tmtccmd":  "t-bye",
       "opts": " 127.0.0.1:5065"
     }
